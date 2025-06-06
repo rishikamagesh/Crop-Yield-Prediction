@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <script src="https://kit.fontawesome.com/92d70a2fd8.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+         background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+    }
+
+    .checkout-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        text-align: center;
+    }
+
+
+    #cartSection {
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+
+    .hidden {
+        display: none;
+    }
+
+
+    .btn {
+        background-color: goldenrod;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .btn:hover {
+        background-color: #333;
+    }
+
+
+    .checkout-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .checkout-form input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+
+    }
+  </style>
+</head>
+<body>
+  <header class="viewport-header">
+        <img
+          class="logo"
+          src="./images/logo1p.png"
+          alt="Farmify
+        Logo"
+        />
+        <nav class="navbar">
+          <a href="./farmify.html">Home</a>
+          <a href="#aboutus">About Us</a>
+          <a href ="#prediction">Prediction</a>
+          <a href="./buy.html">Buy</a>
+          <a href="./prc.html">Sale</a>
+        </nav>
+
+
+      </header>
+  <div class="checkout-container">
+    <h2>Checkout</h2>
+
+
+    <div id="cartSection">
+      <div id="cartSummary"></div>
+      <button id="nextBtn" class="btn">Next</button>
+    </div>
+
+
+    <div id="deliverySection" class="hidden">
+      <form class="checkout-form" id="checkoutForm">
+        <h3>Enter Delivery Details</h3>
+        <input type="text" id="customerName" placeholder="Your Name" required>
+        <input type="text" id="deliveryAddress" placeholder="Delivery Address" required>
+        <input type="tel" id="phoneNumber" placeholder="Phone Number" pattern="[0-9]{10}" title="Enter a 10-digit phone number" required>
+        <button type="submit" class="btn">Confirm Order</button>
+      </form>
+
+      <div class="payment-info">
+        <h3>Payment Option</h3>
+        <p>Only <strong>Cash on Delivery</strong> is available.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+
+    if (!cart || cart.length === 0) {
+      window.location.href = 'index.html';
+    }
+
+    const cartSummary = document.getElementById('cartSummary');
+    let totalAmount = 0;
+
+
+    cartSummary.innerHTML = cart.map(item => {
+      totalAmount += item.price * (item.quantity || 1);
+      return `<p>${item.title} - ₹${item.price} x ${item.quantity || 1}</p>`;
+    }).join('');
+
+    cartSummary.innerHTML += `<p><strong>Total: ₹${totalAmount}</strong></p>`;
+
+
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      document.getElementById('cartSection').classList.add('hidden');
+      document.getElementById('deliverySection').classList.remove('hidden');
+    });
+
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const customerName = document.getElementById('customerName').value.trim();
+      const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+      if (customerName && deliveryAddress && phoneNumber.length === 10) {
+        alert(`Thank you for your order, ${customerName}!\n\nDelivery Address: ${deliveryAddress}\nPhone: ${phoneNumber}\n\nPayment: Cash on Delivery.`);
+
+        localStorage.removeItem('cart');
+        window.location.href = 'index.html';
+      } else {
+        alert("Please fill in all fields correctly.");
+      }
+    });
+  </script>
+</body>
+</html>

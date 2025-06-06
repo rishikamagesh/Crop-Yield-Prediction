@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        }
+
+        .viewport-header {
+            width: 100%;
+            display: flex;
+            background-color: darkgreen;
+            align-items: center;
+            z-index: 1;
+            border-bottom: 1px solid rgba(256, 256, 256, 0.1);
+            height: 110px;
+            padding-top: 10px;
+            position: fixed;
+            top: 0;
+        }
+
+        .navbar {
+            display: flex;
+            font-family: "Times New Roman", Times, serif;
+            margin-left: 400px;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px black;
+            transition: background-color 0.4s;
+        }
+
+        .navbar a:hover {
+            background-color: goldenrod;
+        }
+
+        .logo {
+            height: 150px;
+            width: 150px;
+        }
+
+        .checkout-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+            margin-top: 300px;
+        }
+
+        .checkout-form input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+            width: 100%;
+            margin: 5px 0;
+            margin-left: -10px;
+        }
+
+        .btn {
+            background-color: rgb(5, 142, 5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color:darkgreen;
+        }
+
+        #confirmationMsg {
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="viewport-header">
+        <img class="logo" src="./images/logo1p.png" alt="Farmify Logo" />
+       <nav class="navbar fade-in">
+                <a href="./farmify.html">Home</a>
+                <a href="./aboufarmt.html">About Us</a>
+                <a href="http://127.0.0.1:5000/">Prediction</a>
+                <a href="./shopping.html">Buy</a>
+                <a href="./crop.html">Sale</a>
+            </nav>
+    </header>
+
+    <div class="checkout-container">
+        <h2>Checkout</h2>
+        <div id="cartSection">
+            <div id="cartSummary"></div>
+        </div>
+        <div id="deliverySection">
+            <form class="checkout-form" id="checkoutForm">
+                <h3>Enter Delivery Details</h3>
+                <input type="text" name="customerName" id="customerName" placeholder="Your Name" required>
+                <input type="text" name="deliveryAddress" id="deliveryAddress" placeholder="Delivery Address" required>
+                <input type="tel" name="phoneNumber" id="phoneNumber" placeholder="Phone Number" pattern="\d{10}" title="Enter a 10-digit phone number" required>
+
+                <h4>Credit/Debit Card Payment</h4>
+                <input type="text" name="cardNumber" placeholder="Card Number" id="cardNumber" pattern="\d{16}" title="Please enter a 16-digit card number" required>
+                <input type="text" name="cardHolder" placeholder="Card Holder Name" id="cardHolder" required>
+                <input type="text" name="expiryDate" placeholder="Expiry Date (MM/YY)" id="expiryDate" pattern="^(0[1-9]|1[0-2])\/\d{2}$" title="MM/YY format example: 09/23" required>
+                <input type="text" name="cvv" placeholder="CVV" id="cvv" pattern="\d{3}" title="Please enter a 3-digit CVV" required>
+
+                <button type="submit" class="btn">Confirm Order</button>
+            </form>
+            <div id="confirmationMsg"></div>
+        </div>
+    </div>
+
+    <script>
+        function loadCartItems() {
+            const cart = JSON.parse(localStorage.getItem('checkoutCart')) || [];
+            const cartSummary = document.getElementById('cartSummary');
+            let totalAmount = 0;
+
+            if (cart.length === 0) {
+                cartSummary.innerHTML = "<p>Your cart is empty.</p>";
+            } else {
+                cartSummary.innerHTML = cart.map(item => {
+                    totalAmount += item.price * item.quantity;
+                    return `<p>${item.name} - ₹${item.price} x ${item.quantity}</p>`;
+                }).join('');
+                cartSummary.innerHTML += `<p><strong>Total: ₹${totalAmount.toFixed(2)}</strong></p>`;
+            }
+        }
+
+        window.onload = function() {
+            loadCartItems();
+        };
+
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+
+            const customerName = document.getElementById('customerName').value.trim();
+
+
+            alert('Order Successful!');
+
+
+            const confirmationMsg = document.getElementById('confirmationMsg');
+            confirmationMsg.innerHTML = `Thank you, ${customerName}! Your order has been placed.`;
+            confirmationMsg.style.display = "block";
+        });
+    </script>
+</body>
+
+</html>

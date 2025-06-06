@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #e2efff, #f0f4f7);
+        color: #333;
+        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        background-repeat: repeat;
+      }
+
+      .containertest {
+        padding: 20px;
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+
+      .testimonials {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .testimonial {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 4px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+        transition: all 0.4s ease-in-out;
+        text-align: center;
+      }
+
+      .testimonial:before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        z-index: -1;
+        border-radius: 15px;
+        background: #ffcc00;
+        border: 2px solid #ffcc00;
+        background-clip: padding-box;
+      }
+
+      .testimonial:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        border: 10px solid brown;
+      }
+
+      .testimonial img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid brown;
+        margin-bottom: 15px;
+        transition: transform 0.4s ease-in-out;
+      }
+
+      .testimonial h3 {
+        margin: 15px 0;
+        font-size: 1.8rem;
+        color: #ff6600;
+      }
+
+      .testimonial p {
+        color: black;
+
+        line-height: 26px;
+
+        font-size: 16px;
+        font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+        padding: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="containertest">
+      <h1 style="text-align: center; font-size: 2.5rem; color: #333">
+        Meet Our Team
+      </h1>
+      <div class="testimonials">
+        <div class="testimonial">
+          <img src="R:\python\finalyear\team-2.jpg" alt="Dr. Amy Smith" />
+          <h3>Dr. Amy Smith</h3>
+          <p>
+            Dr. Amy Smith is an agronomist with over 20 years of experience in
+            crop management and soil science. She specializes in optimizing
+            yields for diverse climatic regions.
+          </p>
+        </div>
+        <div class="testimonial">
+          <img src="R:\python\finalyear\team-1.jpg" alt="Dr. Ahmed Khan" />
+          <h3>Dr. Ahmed Khan</h3>
+          <p>
+            With a background in climate modeling and plant biology, Dr. Ahmed's
+            research explores the impact of changing weather patterns on crop
+            yield.
+          </p>
+        </div>
+        <div class="testimonial">
+          <img src="R:\python\finalyear\team-3.jpg" alt="Kalix" />
+          <h3>Kalix</h3>
+          <p>
+            Kalix focuses on precision agriculture and the use of sensors and
+            IoT to monitor crop health and boost productivity sustainably.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

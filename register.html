@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Times New Roman", Times, serif;
+        }
+        body {
+
+    background: url('https://wallpapercrafter.com/sizes/1366x768/1441-sun-hill-road-rays-4k.jpg') no-repeat center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: white;
+     font-family: "Times New Roman", Times, serif;
+}
+        .container {
+            position: relative;
+            margin-top: 150px;
+            width: 750px;
+            background: #fff;
+            padding: 20px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            perspective: 1000px;
+            transition: transform 0.5s ease;
+            height: 500px;
+            margin-left:400px;
+        }
+
+        .container .cover {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 50%;
+            z-index: 98;
+            transition: all 1s ease;
+            transform-origin: left;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+        .container #flip:checked ~ .cover {
+            transform: rotateY(-180deg);
+        }
+        .container .cover .front,
+        .container .cover .back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .cover .back {
+            transform: rotateY(180deg);
+        }
+        .container .cover img {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            z-index: 10;
+            border-radius: 15px;
+        }
+        .container .cover .text {
+            position: absolute;
+            z-index: 10;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .cover .text .text-1,
+        .cover .text .text-2 {
+            z-index: 20;
+            font-size: 26px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+        }
+        .cover .text .text-2 {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .container .forms {
+            height: 100%;
+            width: 100%;
+            background: #fff;
+            border-radius: 15px;
+        }
+        .container .form-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-content .login-form,
+        .form-content .signup-form {
+            width: calc(100% / 2 - 25px);
+        }
+        .forms .form-content .title {
+            position: relative;
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .forms .form-content .input-box {
+            display: flex;
+            align-items: center;
+            height: 40px;
+
+            margin: 6px 0;
+            position: relative;
+        }
+        .form-content .input-box input,
+        .form-content .input-box select {
+            border-color: #1d5707;
+            height: 100%;
+            width: 100%;
+            outline: none;
+            border: none;
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .form-content .input-box input:focus,
+        .form-content .input-box input:valid,
+        .form-content .input-box select:focus,
+        .form-content .input-box select:valid {
+            border-color: #1d5707;
+        }
+        .form-content .input-box i {
+            position: absolute;
+            color: #1d5707;
+            font-size: 17px;
+            border-color: #1d5707;
+        }
+        .forms .form-content .text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-top: 15px;
+        }
+        .forms .form-content .text a {
+            text-decoration: none;
+            color: #1d5707;
+        }
+        .forms .form-content .text a:hover {
+            text-decoration: underline;
+        }
+        .forms .form-content .button {
+            color: #fff;
+            margin: 10px 0px 10px 0px;
+        }
+        .forms .form-content .button input {
+            color: #fff;
+            background: #1d5707;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.4s ease;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+        }
+        .forms .form-content .button input:hover {
+            background: #ffcc00;
+            color: black;
+        }
+        .forms .form-content .login-text,
+        .forms .form-content .sign-up-text {
+            text-align: center;
+            color: #1d5707;
+        }
+        .container #flip {
+            display: none;
+        }
+        @media (max-width: 730px) {
+            .container .cover {
+                display: none;
+            }
+            .form-content .login-form,
+            .form-content .signup-form {
+                width: 100%;
+            }
+            .form-content .signup-form {
+                display: none;
+            }
+            .container #flip:checked ~ .forms .signup-form {
+                display: block;
+            }
+            .container #flip:checked ~ .forms .login-form {
+                display: none;
+            }
+        }
+        .forms .form-content .input-box label {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .navbar {
+            display: flex;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 18px;
+            padding: 10px;
+            margin-left: 350px;
+        }
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px black;
+            transition: background 0.4s ease;
+        }
+        .navbar a:hover {
+            background-color: #1f5b08;
+        }
+        .viewport-header {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 1;
+            border-bottom: 1px solid rgba(256, 256, 256, 0.1);
+            height: 16%;
+            padding-top: 10px;
+            top: 0;
+        }
+        .buttonone {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border-radius: 50px;
+            background-color: transparent;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 15px;
+            gap: 10px;
+            margin-left: 380px;
+            text-decoration: none;
+            border: 2px solid #ffcc00;
+            color: white;
+        }
+        a {
+            text-decoration: none;
+            color: #ffcc00;
+            font-family: Times;
+        }
+        .buttonone:hover {
+            background-color: #ffcc00;
+            color: white;
+        }
+        .logo{
+            height:150px;
+            width:150px;
+        }
+
+
+        .signup-form .input-box {
+            margin: 10px 0;
+        }
+
+
+        .dob-input {
+            padding-top: 10px !important;
+            height: 40px !important;
+        }
+
+
+        .gender-select {
+            padding-top: 0 !important;
+            height: 100% !important;
+            color: #333 !important;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: transparent;
+            padding-left: 30px !important;
+        }
+
+
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border-bottom: none !important;
+            padding-top: 8px;
+        }
+
+        .file-input-container i {
+            position: static !important;
+            margin-right: 10px;
+            color: #1d5707;
+        }
+
+        .file-input-container input[type="file"] {
+            flex-grow: 1;
+            border: none !important;
+            padding: 0 !important;
+            height: auto !important;
+        }
+
+
+        .input-box i.fa-image {
+            top: 12px !important;
+        }
+
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #1d5707;
+            z-index: 10;
+        }
+        .login-form .title{
+margin-top:-30px;
+        }
+
+
+.login-form .button {
+    margin-top: 20px; /* Increase space above the button */
+}
+
+.login-text, .sign-up-text {
+    margin-top: 15px;
+}
+.login-form button .input-box {
+    color: #fff;
+    margin: 10px 0px 10px 0px;
+}
+    </style>
+</head>
+<body>
+ <header class="viewport-header">
+        <img class="logo" src="{{ url_for('static', filename='images/logo1p.png') }}" alt="Farmify Logo" />
+        <nav class="navbar">
+            <a href="{{ url_for('register') }}">Home</a>
+            <a href="{{ url_for('register') }}">About</a>
+            <a href="{{ url_for('register') }}">Prediction</a>
+            <a href="{{ url_for('register') }}">FarmiBuy</a>
+            <a href="{{ url_for('register') }}">FarmiSale</a>
+        </nav>
+    </header>
+    <div class="container">
+        <input type="checkbox" id="flip">
+        <div class="cover">
+            <div class="front">
+                <img src="https://i.pinimg.com/736x/65/28/79/652879fa713aba5c597441f8e67787a4.jpg" alt="Fjord Image">
+            </div>
+            <div class="back">
+                <img class="backImg" src="https://i.pinimg.com/736x/d1/cd/a7/d1cda7cf6f895f73d6fe314ec8afd212.jpg" alt="" />
+            </div>
+        </div>
+        <div class="forms">
+            <div class="form-content">
+                <div class="login-form">
+                    <div class="title">Login</div>
+                    <form id="loginForm">
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" name="phone" placeholder="Enter your phone number" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="password" id="loginPassword" placeholder="Enter your password" required>
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('loginPassword', this)"></i>
+                            </div>
+                            <div class="text">
+                                <a href="#" onclick="resetPassword()" style="color: #1d5707; text-decoration: none;">Forgot Password?</a>
+                            </div>
+                            <div class="button input-box">
+                                <input type="submit" value="Login">
+                            </div>
+                            <div class="text sign-up-text">
+                                Don't have an account? <label for="flip"><a class="underline">Signup now</a></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="signup-form">
+                    <form id="signupForm" enctype="multipart/form-data">
+                        <div class="title">Signup</div>
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-user"></i>
+                                <input type="text" name="name" placeholder="Enter your name" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-calendar"></i>
+                                <input type="date" name="dob" class="dob-input" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-venus-mars"></i>
+                                <select name="gender" class="gender-select" required>
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" name="phone" placeholder="Enter your phone number" required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="password" id="signupPassword" placeholder="Enter your password" required>
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('signupPassword', this)"></i>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="confirm-password" id="confirmPassword" placeholder="Confirm your password" required>
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+                            </div>
+                            <div class="file-input-container">
+                                <i class="fas fa-image"></i>
+                                <input type="file" name="profile_image" accept="image/*" required>
+                            </div>
+                            <div class="button input-box">
+                                <input type="submit" value="Signup">
+                            </div>
+                            <div class="text sign-up-text">
+                                Already have an account? <label for="flip"><a class="underline">Login now</a></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId, icon) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/submit-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                window.location.href = "/farmify";
+            } else {
+                alert(result.message);
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            const response = await fetch('/submit-signup', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                document.getElementById('flip').checked = false;
+            } else {
+                alert(result.message);
+            }
+        });
+
+        function resetPassword() {
+            const email = prompt("Please enter your registered email address:");
+
+            if (!email) {
+                alert("Email cannot be empty.");
+                return;
+            }
+
+            const newPassword = prompt("Please enter your new password:");
+
+            if (!newPassword) {
+                alert("New password cannot be empty.");
+                return;
+            }
+
+            const payload = {
+                email: email,
+                password: newPassword
+            };
+
+            fetch('/reset_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || "An error occurred during the password reset.");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        document.getElementById('loginButton').addEventListener('click', function() {
+            window.location.href = 'register.html';
+        });
+    </script>
+</body>
+</html>

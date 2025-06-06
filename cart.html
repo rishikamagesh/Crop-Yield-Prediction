@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart</title>
+    <script src="https://kit.fontawesome.com/92d70a2fd8.js" crossorigin="anonymous"></script>
+    <style>
+    </style>
+</head>
+<body>
+<header class="viewport-header">
+    <img class="logo" src="./images/logo1p.png" alt="Farmify Logo" />
+    <nav class="navbar fade-in">
+        <a href="./farmify.html">Home</a>
+        <a href="./aboufarmt.html">About Us</a>
+        <a href="http://127.0.0.1:5000/">Prediction</a>
+        <a href="./shopping.html">Buy</a>
+        <a href="./cart.html">My Cart</a>
+        <a href="./crop.html">Sale</a>
+    </nav>
+</header>
+<div class="sidebar">
+    <h3>My Cart</h3>
+    <div id="cart-items">Your cart is empty</div>
+    <h4>Total: ₹<span id="total">0.00</span></h4>
+    <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+</div>
+<script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function renderCart() {
+        if (cart.length === 0) {
+            document.getElementById('cart-items').innerHTML = 'Your cart is empty';
+            document.getElementById('total').textContent = '0.00';
+            return;
+        }
+
+        let total = 0;
+        document.getElementById('cart-items').innerHTML = cart.map((item, index) => {
+            total += item.price * item.quantity;
+            return `
+                <div class='cart-item'>
+                    <span>${item.name} (${item.quantity})</span>
+                    <span>₹${item.price * item.quantity}</span>
+                    <button onclick="removeFromCart(${index})">❌</button>
+                </div>`;
+        }).join('');
+
+        document.getElementById('total').textContent = total.toFixed(2);
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function proceedToCheckout() {
+        if (cart.length === 0) {
+            alert("Your cart is empty. Add items before proceeding.");
+            return;
+        }
+        window.location.href = "check.html";
+    }
+
+    window.onload = function() {
+        renderCart();
+    };
+</script>
+<div class="footer">
+
+</div>
+</body>
+</html>

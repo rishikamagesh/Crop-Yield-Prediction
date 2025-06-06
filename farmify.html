@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmify</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/farmify.js') }}" defer></script>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/farmify.css') }}">
+    <style>
+
+
+
+.fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+
+        }
+
+        .fade-in-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+        }
+
+        .fade-in.delay {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+
+    margin-left:250px;
+}
+
+
+.profile-image {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+ .dropbtn {
+      background-color: transparent;
+      border: none;
+      color: white;
+      padding: 10px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 5px;
+    }
+
+    .dropdown-content a {
+      color: #285B3D;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s;
+      font-size:17px;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #ffcc00;
+      color: black;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+
+
+.username {
+    color:black;
+}
+.welcome-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            backdrop-filter: blur(10px);
+            width: 400px;
+        }
+
+        .welcome-title {
+            font-size: 2.0em;
+            margin: 0;
+            color: #4CAF50;
+        }
+
+        .welcome-message {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-message" class="welcome-container hidden">
+        <p class="welcome-title">Welcome to Farmify!</p>
+        <p class="welcome-message" id="user-name">Hello, <span id="userName">{{ user.name }}</span>!</p>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function showWelcomeMessage() {
+            const welcomeMessage = document.getElementById('welcome-message');
+
+            welcomeMessage.classList.remove('hidden');
+
+
+            setTimeout(() => {
+                welcomeMessage.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeMessage.classList.add('hidden');
+                }, 500);
+            }, 1500);
+        }
+
+
+        showWelcomeMessage();
+
+
+        const redirectButton = document.getElementById('redirect-button');
+        if (redirectButton) {
+            redirectButton.addEventListener('click', function() {
+                window.location.href = 'register.html';
+            });
+        }
+
+    });
+</script>
+    <section class="firstsection fade-in">
+        <div class="section-right">
+            <div class="location" id="currentLocation">
+                <i class="fas fa-map-marker-alt"></i> Fetching location...
+            </div>
+            <div class="temperature fade-in delay" id="temperature">
+                <i class="fas fa-thermometer-half"></i> Loading...
+            </div>
+            <div class="time fade-in delay" id="currentTime">
+                <i class="fas fa-clock"></i> Loading...
+            </div>
+            <div id="google_translate_element" style="margin-left: -13px;"></div>
+        </div>
+    </section>
+
+    <section class="video-section fade-in">
+        <div class="video-container">
+            <video class="bg-video" autoplay loop muted id="bgVideo">
+                <source src="{{ url_for('static', filename='videos/video3.mp4') }}" type="video/mp4">
+            </video>
+            <div class="bg-overlay"></div>
+        </div>
+<header class="viewport-header fade-in">
+    <img class="logo" src="{{ url_for('static', filename='images/logo1p.png') }}" alt="Farmify Logo" />
+    <nav class="navbar fade-in">
+        <ul>
+            <a href="{{ url_for('farmify') }}">Home</a>
+            <a href="{{ url_for('about_farm') }}">About</a>
+            <a href="{{ url_for('prediction') }}">Prediction</a>
+            <a href="{{ url_for('myshopping') }}">FarmiBuy</a>
+            <a href="{{ url_for('crop') }}">FarmiSale</a>
+
+        </ul>
+
+<div class="dropdown">
+    <button class="dropbtn" aria-label="User  menu">
+        {% if user.profile_image_url %}
+            <img src="{{ user.profile_image_url }}" alt="User  Profile" class="profile-image" />
+        {% else %}
+            <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Default Profile" class="profile-image" />
+        {% endif %}
+        <span class="username" style="color:black;font-weight:bold;">{{ user.name }}</span>
+        <i class="fas fa-chevron-down" style="margin-left: 5px;"></i>
+    </button>
+    <div class="dropdown-content">
+       <a href="{{ url_for('dashboard') }}">Profile</a>
+                    <a href="{{ url_for('myaddcart') }}">Your Cart</a>
+                    <a href="{{ url_for('mypurchases')}}"> Your Purchases</a>
+                    <a href="{{ url_for('prediction_reports') }}">Prediction Report</a>
+                    <a href="{{ url_for('sales_reports') }}">Sales Report</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</div>
+    </nav>
+</header>
+        <section class="section-main fade-in">
+            <div class="section-main1 fade-in">
+                <h1 class="main1-h1 fade-in">Turning data into bountiful harvests, one recommendation at a time.</h1>
+                <p class="main1-p fade-in delay">Insight-driven farming for a better tomorrow.</p>
+                <a href="{{ url_for('about_farm') }}" class="buttonsecond fade-in delay">
+    <i class="fa-duotone fa-solid fa-arrow-right"></i>
+    <span>Click Here</span>
+</a>
+                <div class="delivered-meals fade-in">
+                    <div class="delivered-images">
+                  <img src="{{ url_for('static', filename='images/gp1.jpg') }}" alt="Customer testimonial" />
+                <img src="{{ url_for('static', filename='images/gp2.jpg') }}" alt="Customer testimonial" />
+                 <img src="{{ url_for('static', filename='images/gp3.jpg') }}" alt="Customer testimonial" />
+                <img src="{{ url_for('static', filename='images/gp4.jpg') }}" alt="Customer testimonial" />
+                <img src="{{ url_for('static', filename='images/gp5.jpg') }}" alt="Customer testimonial" />
+                <img src="{{ url_for('static', filename='images/gp6.jpg') }}" alt="Customer testimonial" />
+                    </div>
+                    <p class="deliver fade-in delay">Get Precise Results in Just Minutes!</p>
+                </div>
+            </div>
+        </section>
+      </section>
+       <section class="section-featured fade-in-section">
+        <div class="container  fade-in-section">
+            <h2 class="heading-featured-in fade-in">AS FEATURED IN</h2>
+            <div class="logos fade-in">
+<img style="width: 200px; height: 170px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo2.jpg') }}" alt="business-insider" />
+<img style="width: 200px; height: 170px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo3.jpg') }}" alt="forbes" />
+<img style="width: 200px; height: 160px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo4.jpg') }}" alt="usa today" />
+<img style="width: 200px; height: 150px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo7.jpg') }}" alt="usa today" />
+<img style="width: 220px; height: 160px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logomine.jpg') }}" alt="usa today" />
+            </div>
+        </div>
+    </section>
+<h2 class="heading-featured-in fade-in-section">ABOUT FARMIFY</h2>
+    <section id="about-section">
+        <div class="about-left fade-in-section">
+            <img src="{{ url_for('static', filename='images/ab.jpg') }}" alt="About Img" />
+        </div>
+
+        <div  class="about-right fade-in-section">
+            <h2 style="color: #ffcc00">Introduction</h2>
+            <p>
+                Welcome to Farmify your trusted partner in revolutionizing agriculture
+                through data-driven insights and innovative solutions.
+            </p>
+            <h3>Our Story</h3>
+            <p>
+                Born from a vision to empower farmers with technology, Farmify was
+                created to help you make smarter decisions about your crops. We
+                understand the challenges of farming in a world of changing climates,
+                unpredictable markets, and limited resources. That’s why we’re here to
+                simplify the process, offering insights and tools to help you maximize
+                your harvests with ease.
+            </p>
+            <h3>What we are known for</h3>
+            <div class="chat">
+                <ul>
+                    <li>
+                        <span class="chat-logo"></span>
+                        <i style="margin-right: 10px; color: #3e6545" class="fa-solid fa-arrow-right"></i>
+                        Tailored Crop Recommendations: Find the best crops to grow based
+                        on your location, soil type, and weather conditions.
+                    </li>
+                    <li>
+                        <span class="chat-logo"></span>
+                        <i style="margin-right: 10px; color: #3e6545" class="fa-solid fa-user-secret"></i>
+                        Smart Chatbot Assistance: Our intelligent chatbot is available
+                        24/7 to guide you through crop selection, answer queries, and
+                        provide farming tips.
+                    </li>
+                    <li>
+                        <span class="chat-logo"></span>
+                        <i style="margin-right: 10px; color: #3e6545; text-align: start" class="fa-solid fa-cart-shopping"></i>
+                        Buy and Sell Products: Easily trade crops, seeds, fertilizers, and
+                        more through our secure marketplace. Connect directly with buyers
+                        and sellers, cutting out middlemen and maximizing profits.
+                    </li>
+                </ul>
+            </div>
+            <div class="expertise">
+                <h3>My Expertise</h3>
+                <ul>
+                    <li>
+                        <span class="expertise-logo">
+                            <i class="fa-solid fa-tractor"></i>
+                        </span>
+                        <p>Accuracy</p>
+                    </li>
+                    <li>
+                        <span class="expertise-logo">
+                            <i class="fa-solid fa-link"></i>
+                        </span>
+                        <p>Simplicity</p>
+                    </li>
+                    <li>
+                        <span class="expertise-logo">
+                            <i class="fa-solid fa-comments"></i>
+                        </span>
+                        <p>Support</p>
+                    </li>
+                    <li>
+                        <span class="expertise-logo">
+                            <i class="fa-solid fa-people-arrows"></i>
+                        </span>
+                        <p>Community</p>
+                    </li>
+                </ul>
+            </div>
+            <button class="buttonthird">
+                <i class="fa-duotone fa-solid fa-arrow-right"></i>
+                <span>Know More About Us</span>
+            </button>
+        </div>
+    </section>
+
+    <section id="prediction-section" >
+        <div class="prediction-container">
+            <div class="prediction-content fade-in-section">
+                <h2 style="color: #ffcc00">Farmify's achievement in recent years</h2>
+                <p>
+                    Our predictive analytics engine leverages historical data to forecast agricultural outcomes, helping farmers make informed decisions. Here’s how we break it down:
+                </p>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <i class="fas fa-database"></i>
+                        <p>Data Insights: We analyze historical user trends and crop yield data.</p>
+                    </li>
+                    <li class="info-item">
+                        <i class="fas fa-brain"></i>
+                        <p>Algorithms: Our algorithms predict the best crop choices for upcoming seasons based on environmental factors.</p>
+                    </li>
+                    <li class="info-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Accuracy: By continually refining our predictions, we ensure improved accuracy over time.</p>
+                    </li>
+                </ul>
+                <p>
+                    With Farmify, you're not just planting seeds; you're strategically planting based on data-driven insights for larger yields and sustainability.
+                </p>
+            </div>
+            <div class="chart-container fade-in-section">
+                <canvas id="farmifyChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <div class="team-section  fade-in-section" >
+        <h2 class="heading-featured-in1 animate-fade-in">MEET OUR TEAM</h2>
+        <div style="margin-top: 50px;" class="team-container">
+            <div class="team-member">
+                <div class="team-img">
+                    <img style="height:100%;" src="{{ url_for('static', filename='images/farmer7.jpg') }}" alt="Dr. Amy Smith" />
+                    <div class="overlay">
+                        <h3>Prediction Analyst</h3>
+                    </div>
+                </div>
+                <p style="color: #3e6545; font-weight: bold; font-size: 16px; text-align: center;">Mr. Munusamy</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" style="background-color:skyblue" class="social-icon">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="team-img">
+                    <img src="{{ url_for('static', filename='images/farmer2.jpg') }}" alt="Dr. Amy Smith" />
+                    <div class="overlay">
+                        <h3>Weather Analyst</h3>
+                    </div>
+                </div>
+                <p style="color: #3e6545; font-weight: bold; font-size: 16px; text-align: center;">A. Ramasamy</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" style="background-color:skyblue" class="social-icon twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="team-img">
+                   <img src="{{ url_for('static', filename='images/farmer4.jpg') }}" alt="Dr. Amy Smith" />
+                    <div class="overlay">
+                        <h3>Pesticide Recommender</h3>
+                    </div>
+                </div>
+                <p style="color: #3e6545; font-weight: bold; font-size: 16px; text-align: center;">Mr. Karuppaya</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" style="background-color:skyblue" class="social-icon twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="app-section  fade-in-section">
+        <h2 class="heading-featured-in fade-in">BUY AND SELL PRODUCTS</h2>
+        <div style="margin-top:50px;" class="container1 fade-in">
+            <div>
+                <h2 style="padding-top: 50px; color: black">Farmify: Revolutionizing Farm-to-Table Connections</h2>
+                <p style="color: white">Discover how Farmify bridges the gap between farmers and consumers, promoting sustainable agriculture and transforming lives.</p>
+            </div>
+
+            <div class="features1">
+                <div class="feature1 fade-in">
+                    <div class="icon-container">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Fresh & Organic</h3>
+                    <p>Experience farm-fresh fruits and vegetables delivered directly to your doorstep.</p>
+                </div>
+
+                <div class="feature1 fade-in delay">
+                    <div class="icon-container">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h3>Empower Farmers</h3>
+                    <p>Support local farmers and give back to the community while enjoying premium products.</p>
+                </div>
+
+                <div class="feature1 fade-in delay">
+                    <div class="icon-container">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Sustainability</h3>
+                    <p>Join us in promoting eco-friendly farming practices for a healthier planet.</p>
+                </div>
+            </div>
+            <button class="buttonfour fade-in">
+                <i class="fa-duotone fa-solid fa-arrow-right"></i>
+                <span>Know More About Us</span>
+            </button>
+        </div>
+    </section>
+ <section class ="reviews-section fade-in-section">
+
+    <div class="review-box-main title ">
+        <h2 style="color:darkgreen;">What Our Customers Say</h2>
+        <h1 style="color:rgb(96, 206, 96)">We take pride in the trust and appreciation our customers show us. Here’s what some of our farmers have to say about their experiences with our services and solutions:</h1>
+        <h3 style="color:rgb(106, 154, 105);">Grow smarter, not harder—with Farmify’s predictive insights.</h3>
+    </div>
+
+    <div class="review-box review">
+<img src="{{ url_for('static', filename='images/test1.jpg') }}" alt="Customer 1">
+        <p>"Great experience! Highly recommended."</p>
+        <span>- Rajesh Kumar, Organic Farmer</span>
+    </div>
+
+    <div class="review-box review">
+        <img src="{{ url_for('static', filename='images/test2.jpg') }}" alt="Customer 1">
+        <p>"Amazing service and support!"</p>
+        <span>- Anita Patel, Rice Grower</span>
+    </div>
+
+    <div class="review-box review">
+        <img src="{{ url_for('static', filename='images/test3.jpg') }}" alt="Customer 1">
+ <p>"Top-notch quality and attention to detail."</p>
+        <span>- Priya Verma, Horticulturist</span>
+    </div>
+
+    <div class="review-box review">
+        <img src="{{ url_for('static', filename='images/test4.jpg') }}" alt="Customer 1">
+
+         <p>"Helped me achieve my goals seamlessly."</p>
+        <span>- Vinod Sharma, Agro-specialist</span>
+    </div>
+
+    <div class="review-box review">
+        <img src="{{ url_for('static', filename='images/test5.jpg') }}" alt="Customer 1">
+        <p>"Truly a game-changer for us!"</p>
+        <span>- Sulochana susan dennis, Dairy Farmer</span>
+    </div>
+</section>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+
+        const sections = document.querySelectorAll('.fade-in-section');
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+    const userProfileButton = document.getElementById('userProfile');
+    if (userProfileButton) {
+        userProfileButton.addEventListener('click', function() {
+            window.location.href = '/dashboard';
+        });
+    }
+
+    const logoutButton = document.getElementById('logout');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            window.location.href = '/register';
+        });
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/submit-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                window.location.href = '/farmify';
+            } else {
+                alert(result.message);
+            }
+        });
+    }
+});
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById("farmifyChart").getContext("2d");
+            const farmifyChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["2020", "2021", "2022", "2023", "2024"],
+                    datasets: [
+                        {
+                            label: "Users (in thousands)",
+                            data: [10, 50, 120, 250, 500],
+                            backgroundColor: "rgba(0, 128, 0, 0.7)",
+                            borderColor: "green",
+                            borderWidth: 1,
+                        },
+                        {
+                            label: "Prediction Accuracy (%)",
+                            data: [70, 75, 80, 85, 90],
+                            backgroundColor: "rgba(255, 165, 0, 0.7)",
+                            borderColor: "orange",
+                            borderWidth: 1,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: "top",
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 600,
+                            title: {
+                                display: true,
+                                text: "Users & Accuracy (%)",
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: "easeInOutQuart"
+                    }
+                }
+            });
+        });
+
+    </script>
+
+    <div class="footer">
+        <div class="content2">
+            <div class="services2">
+                <h4>Services</h4>
+                <p><a href="#">Prediction</a></p>
+                <p><a href="#">Chat Bot</a></p>
+                <p><a href="#">Buy And Sell Products</a></p>
+            </div>
+            <div class="social-media2">
+                <h4>Social</h4>
+                <p>
+                    <a href="#"><i class="fab fa-linkedin"></i> Linkedin</a>
+                </p>
+                <p>
+                    <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                </p>
+                <p>
+                    <a href="https://github.com/farazc60"><i class="fab fa-github"></i> Github</a>
+                </p>
+                <p>
+                    <a href="https://www.facebook.com/codewithfaraz"><i class="fab fa-facebook"></i> Facebook</a>
+                </p>
+                <p>
+                    <a href="https://www.instagram.com/codewithfaraz"><i class="fab fa-instagram"></i> Instagram</a>
+                </p>
+            </div>
+            <div class="links">
+                <h4>Quick links</h4>
+                <p><a href="#">Home</a></p>
+                <p><a href="#">About</a></p>
+                <p><a href="#">Prediction</a></p>
+                <p><a href="#">Buy And Sell</a></p>
+            </div>
+            <div class="details">
+                <h4 class="address">Address</h4>
+                <p>Chennai, Tamilnadu, India<br /></p>
+                <h4 class="mobile">Mobile</h4>
+                <p><a href="#">+91-12345678</a></p>
+                <h4 class="mail">Email</h4>
+                <p><a href="#">farmify@gmail.com</a></p>
+            </div>
+        </div>
+        <footer>
+            <hr />
+            © 2025 Farmify
+        </footer>
+    </div>
+
+</body>
+</html>

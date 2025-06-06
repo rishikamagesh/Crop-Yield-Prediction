@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Reports</title>
+    <style>
+        body {
+            font-family: 'times', sans-serif;
+           background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(162, 160, 12);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgb(162, 160, 12);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        a.download-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: rgb(162, 160, 12); 
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a.download-button:hover {
+            background-color:rgb(162, 160, 12);
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: rgb(162, 160, 12); ;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: rgb(162, 160, 12); 
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Sales Reports</h1>
+    <div class="container">
+        {% if reports %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Report Date</th>
+                        <th>Total Revenue</th>
+                        <th>Total Items Sold</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ report.total_revenue }}</td>
+                            <td>{{ report.total_items_sold }}</td>
+                            <td>
+                                <a class="download-button" href="{{ url_for('download_sales_report_by_id', report_id=report.id) }}">Download</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">You have no sales reports available.</p>
+        {% endif %}
+    </div>
+
+    <a class="back-link" href="{{ url_for('farmify') }}">Back to Home Page</a>
+</body>
+</html>

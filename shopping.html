@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Shopping Page</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        }
+
+        .viewport-header {
+            display: flex;
+            align-items: center;
+            background-color: rgb(2, 84, 5);
+            color: white;
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid rgba(256, 256, 256, 0.1);
+            height: 110px;
+        }
+
+        .logo {
+            height: 130px;
+            width: 130px;
+            padding-top: 10px;
+        }
+
+        .navbar {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 18px;
+            gap: 15px;
+            margin-left: 280px;
+            margin-top:-20px;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: background 0.4s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #ffcc00;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-bar {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: darkgreen;
+        }
+
+        .product-list-header {
+            margin: 20px auto;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 50px;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 430px;
+            position: relative;
+        }
+
+        .product img {
+            width: 300px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .out-of-stock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(101, 4, 4, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .add-to-cart {
+            background-color: rgb(5, 126, 33);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        .add-to-cart:hover {
+            background-color: rgb(5, 58, 16);
+        }
+
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .quantity-button {
+            background-color: rgb(3, 67, 25);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 14px;
+        }
+
+        .quantity-button:hover {
+            background-color: #0056b3;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        #cart-link {
+            margin: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: lightblue;
+            color: black;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #cart-link:hover {
+            background-color: deepskyblue;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin-left: 300px;
+        }
+
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .dropbtn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-left:70px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1d5707;
+            min-width: 160px;
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ffcc00;
+            color: black;
+        }
+
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .username {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="viewport-header fade-in">
+        <img class="logo" src="{{ url_for('static', filename='images/logo1p.png') }}" alt="Farmify Logo" />
+        <nav class="navbar fade-in">
+            <a href="{{ url_for('farmify') }}">Home</a>
+            <a href="{{ url_for('about_farm') }}">About</a>
+            <a href="{{ url_for('prediction') }}">Prediction</a>
+            <a href="{{ url_for('myshopping') }}">FarmiBuy</a>
+            <a href="{{ url_for('crop') }}">FarmiSale</a>
+            <div class="dropdown">
+                <button class="dropbtn" aria-label="User  menu">
+                    {% if user.profile_image_url %}
+                        <img src="{{ user.profile_image_url }}" alt="User  Profile" class="profile-image" />
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Default Profile" class="profile-image" />
+                    {% endif %}
+                    <span class="username">{{ user.name }}</span>
+                    <i class="fas fa-chevron-down" style="margin-left: 5px;"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('dashboard') }}">Profile</a>
+                    <a href="{{ url_for('myaddcart') }}">Your Cart</a>
+                    <a href="{{ url_for('mypurchases')}}"> Your Purchases</a>
+                    <a href="{{ url_for('prediction_reports') }}">Prediction Report</a>
+                    <a href="{{ url_for('sales_reports') }}">Sales Report</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" id="search-input" placeholder="Search products..." oninput="filterProducts()">
+        <button class="search-button" onclick="filterProducts()">Search</button>
+    </div>
+
+    <div class="container" id="product-list">
+        <!-- Products will be rendered here -->
+    </div>
+
+    {% if cart_items and cart_items|length > 0 %}
+    <h2>Items in Your Cart</h2>
+    <ul>
+        {% for item in cart_items %}
+        <li>
+            <img src="{{ item.image_path }}" alt="{{ item.stock_name }}" style="width:100px;height:100px;">
+            <strong>{{ item.stock_name }}</strong><br>
+            Price: ₹{{ item.price }}<br>
+            Quantity: {{ item.quantity }}<br>
+            <form action="{{ url_for('remove_from_cart', crop_id=item.crop_id) }}" method="post">
+                <button type="submit">Remove</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p style="display:none;">Your shopping cart is empty.</p>
+    {% endif %}
+
+    <script>
+    let allCrops = [];
+
+    async function fetchCrops() {
+        try {
+            const response = await fetch('/api/stocks');
+            if (!response.ok) {
+                throw new Error('Failed to fetch crops');
+            }
+            allCrops = await response.json();
+            renderProducts(allCrops);
+        } catch (error) {
+            console.error('Error fetching crops:', error);
+            const productList = document.getElementById('product-list');
+            if (productList) {
+                productList.innerText = 'Failed to load crops. Please try again later.';
+            } else {
+                console.error('Product list container not found');
+            }
+        }
+    }
+
+    function renderProducts(crops) {
+        const productList = document.getElementById('product-list');
+        if (!productList) {
+            console.error('Product list container not found');
+            return;
+        }
+
+        productList.innerHTML = '';
+
+        crops.forEach(crop => {
+            const isOutOfStock = crop.quantity <= 0;
+            let stockLabel = isOutOfStock ? '<div class="out-of-stock">Out of Stock</div>' : '';
+
+            const productCard = `
+                <div class="product" data-id="${crop.crop_id}">
+                <img src="${crop.image ? `{{ url_for('static', filename='images/') }}${crop.image}` : '{{ url_for('static', filename='images/default-image.png') }}'}" alt="${crop.stock_name}">
+                    <h3>${crop.stock_name}</h3>
+                    <p>Price: ₹${crop.price}</p>
+                    ${stockLabel}
+                    <div class="quantity-container">
+                        <button class="quantity-button" onclick="changeQuantity(${crop.crop_id}, -1)" ${isOutOfStock ? 'disabled' : ''}>-</button>
+                        <input type="number" id="quantity_${crop.crop_id}" value="1" min="1" class="quantity-input" style="width: 50px;" ${isOutOfStock ? 'disabled' : ''} />
+                        <button class="quantity-button" onclick="changeQuantity(${crop.crop_id}, 1)" ${isOutOfStock ? 'disabled' : ''}>+</button>
+                    </div>
+                    <div class="quantity-container">
+                        <button class="add-to-cart" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart(${crop.crop_id}, '${crop.stock_name}')">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+            productList.insertAdjacentHTML('beforeend', productCard);
+        });
+    }
+
+    function changeQuantity(crop_id, change) {
+        const quantityInput = document.getElementById(`quantity_${crop_id}`);
+        let currentQuantity = parseInt(quantityInput.value) || 0;
+        currentQuantity += change;
+        if (currentQuantity < 1) currentQuantity = 1;
+        quantityInput.value = currentQuantity;
+    }
+
+    function filterProducts() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const filteredCrops = allCrops.filter(crop =>
+            crop.stock_name.toLowerCase().includes(searchTerm)
+        );
+
+        if (filteredCrops.length === 0) {
+            document.getElementById('product-list').innerHTML = '<p>No products found.</p>';
+        } else {
+            renderProducts(filteredCrops);
+        }
+    }
+
+    async function addToCart(crop_id, crop_name) {
+        const quantityInput = document.getElementById(`quantity_${crop_id}`);
+        const quantity = parseInt(quantityInput.value) || 1;
+
+        const cartItem = { crop_id, quantity };
+
+        try {
+            const response = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cartItem)
+            });
+
+            if (response.ok) {
+                alert(`"${crop_name}" added to cart successfully!`);
+            } else {
+                const result = await response.json();
+                alert(result.message || "Unable to add item to cart.");
+            }
+        } catch (error) {
+            console.error('Error adding item to cart:', error);
+            alert("There was an error processing your request.");
+        }
+    }
+
+    window.onload = fetchCrops;
+</script>
+</body>
+
+</html>

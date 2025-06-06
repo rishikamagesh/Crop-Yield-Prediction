@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <title>User Profile Dashboard</title>
+    <style>
+      body {
+        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      header {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: white;
+        padding: 20px;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo h1 {
+        font-size: 2.5em;
+        margin-left: 20px;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+      }
+      nav ul li {
+        display: inline;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2em;
+      }
+      nav ul li a:hover {
+        text-decoration: underline;
+      }
+      .profile-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+      .profile-dropdown:hover .dropdown-content {
+        display: block;
+      }
+      .dashboard {
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+      }
+      .dashboard h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .profile-info {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      .profile-info p {
+        margin: 10px 0;
+      }
+      .profile-info label {
+        font-weight: bold;
+      }
+      .btn-edit {
+        background-color: #ffcc00;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: block;
+        width: 100%;
+        text-align: center;
+        transition: background-color 0.3s;
+      }
+      .btn-edit:hover {
+        background-color: white;
+        color: #ffcc00;
+        border: 1px solid #ffcc00;
+      }
+      .footer {
+        margin-top: 20px;
+        background-color: black;
+        color: #fefefe;
+        text-align: center;
+        padding: 10px;
+        position: relative;
+      }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <h1>Farmify</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="./farmify.html">Home</a></li>
+            <li><a href="./aboutfarmt.html">About Us</a></li>
+            <li><a href="http://127.0.0.1:5000/">Prediction</a></li>
+            <li><a href="./shopping.html">Buy</a></li>
+            <li><a href="./crop.html">Sell</a></li>
+        </ul>
+    </nav>
+    <div class="profile-dropdown">
+        <button class="buttonone">
+            <i class="fa-solid fa-user"></i>
+            <span>User Profile</span>
+        </button>
+        <div class="dropdown-content">
+            <a href="#">Purchased Items</a>
+            <a href="#">User Details</a>
+            <a href="#">Logout</a>
+        </div>
+    </div>
+</header>
+
+<div class="dashboard">
+    <h2>User Profile Dashboard</h2>
+    <div class="profile-info">
+        <p><label for="name">Name:</label> <span id="name">John Doe</span></p>
+        <p><label for="dob">Date of Birth:</label> <span id="dob">01/01/1990</span></p>
+        <p><label for="email">Email:</label> <span id="email">john@example.com</span></p>
+        <p><label for="phone">Phone:</label> <span id="phone">123-456-7890</span></p>
+        <p><label for="address">Address:</label> <span id="address">123 Farm Lane, Agri City</span></p>
+        <button class="btn-edit" onclick="editProfile()">Edit Profile</button>
+    </div>
+</div>
+
+<div class="footer">
+    <p>&copy; 2023 Farmify - All Rights Reserved</p>
+</div>
+
+<script>
+
+  function editProfile() {
+      alert("Edit Profile functionality goes here.");
+  }
+</script>
+
+</body>
+</html>

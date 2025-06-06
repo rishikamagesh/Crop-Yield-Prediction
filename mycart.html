@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart</title>
+  </head>
+  <body>
+    <h2>Your Cart</h2>
+    <div id="cartItemsList"></div>
+
+    <script>
+      window.onload = function () {
+
+        let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+
+
+        let cartItemsList = document.getElementById("cartItemsList");
+
+        if (cartItems.length > 0) {
+          cartItems.forEach((item) => {
+            let itemElement = document.createElement("div");
+            itemElement.textContent = item + " has been added to your cart.";
+            cartItemsList.appendChild(itemElement);
+          });
+        } else {
+          cartItemsList.innerHTML = "<p>No items in your cart yet.</p>";
+        }
+      };
+    </script>
+  </body>
+</html>

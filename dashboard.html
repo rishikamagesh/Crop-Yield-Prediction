@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Times', sans-serif;
+            margin: 0;
+            padding: 0;
+ background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        #profile {
+            margin-left: -50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 30px 20px;
+            width: 400px;
+            text-align: center;
+        }
+        #profile img {
+
+    height: 150px;
+    width: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 4px solid rgb(32, 30, 5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        #profile img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        #user-info h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        #user-info p {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        #user-info strong {
+            color: rgb(164, 150, 5)
+        }
+
+    </style>
+</head>
+<body>
+<div id="profile">
+    <img src="{{ user.profile_image_url if user.profile_image_url else url_for('static', filename='images/default_user.png') }}" alt="User Profile Image">
+    <div id="user-info">
+        <h1>Welcome, {{ user.name }}!</h1>
+<p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Gender:</strong> {{ user.gender }}</p>
+        <p><strong>Date of Birth:</strong> {{ user.dob }}</p>
+    </div>
+</div>
+
+</body>
+</html>

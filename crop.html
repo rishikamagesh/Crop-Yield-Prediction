@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Management</title>
+    <link rel="icon" href="/path/to/your/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Times', sans-serif;
+            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4d4d4d;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e6ffe6;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-button {
+            background-color: #1E90FF;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: rgb(188, 12, 30);
+            color: white;
+        }
+
+        .chart-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #sales-chart {
+            max-width: 800px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <h1>Farmify Sale</h1>
+    <div id="notification" class="notification"></div>
+
+    <div class="container">
+    <h2>Add/Edit Crop</h2>
+    <form id="crop-form">
+        <input type="hidden" id="crop-id" value="">
+        <input type="text" id="crop-name" placeholder="Product Name" required>
+        <input type="number" id="crop-price" placeholder="Product Price (₹)" required min="0">
+        <input type="number" id="crop-quantity" placeholder="Product Quantity" required min="0">
+        <input type="file" id="crop-image" accept="image/*">
+        <div class="action-buttons">
+            <button type="submit" id="submit-button" class="add-button">Add Product</button>
+            <button type="button" onclick="cancelEdit()" class="add-button" id="cancel-button" style="display: none;">Cancel</button>
+        </div>
+    </form>
+</div>
+
+    <div class="container">
+        <h2>Added Products</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="Product-list">
+            </tbody>
+        </table>
+
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="downloadSalesReport()" class="add-button">Download Sales Report</button>
+        </div>
+    </div>
+
+
+    <div class="container chart-container">
+        <h2>Expected Revenue</h2>
+        <canvas id="sales-chart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.getElementById('crop-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const cropPrice = parseFloat(document.getElementById('crop-price').value);
+    const cropQuantity = parseInt(document.getElementById('crop-quantity').value);
+
+    if (cropPrice < 0 || cropQuantity < 0) {
+        alert('Price and quantity must be non-negative values.');
+        return;
+    }
+
+    // Rest of the form processing logic...
+});
+        let existingCropNames = new Set();
+
+
+        async function fetchCrops() {
+            try {
+                const response = await fetch('/api/crops');
+                if (!response.ok) throw new Error('Failed to fetch crops');
+                const crops = await response.json();
+                renderCrops(crops);
+                updateSalesChart(crops);
+            } catch (error) {
+                console.error(error);
+                alert('Refresh the page to reflect changes');
+            }
+        }
+
+
+        function renderCrops(crops) {
+            const cropsList = document.getElementById('Product-list');
+            cropsList.innerHTML = '';
+            crops.forEach(crop => {
+                existingCropNames.add(crop.stock_name);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${crop.stock_name}</td>
+                    <td>₹${crop.price}</td>
+                    <td>${crop.quantity}</td>
+                    <td><img src="${crop.image ? '/static/images/' + crop.image : ''}" alt="${crop.stock_name}" style="width: 50px; height: 50px;"></td>
+                    <td>
+                        <button class="edit-button" onclick="editCrop(${crop.crop_id}, '${crop.stock_name}', ${crop.price}, ${crop.quantity})">Edit</button>
+                        <button class="delete-button" onclick="deleteCrop(${crop.crop_id})">Delete</button>
+                    </td>
+                `;
+                cropsList.appendChild(row);
+            });
+        }
+
+
+        function updateSalesChart(crops) {
+            const labels = crops.map(crop => crop.stock_name);
+            const data = crops.map(crop => crop.price * crop.quantity);
+
+            const ctx = document.getElementById('sales-chart').getContext('2d');
+
+            const salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales Revenue',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: ' Expected Revenue (₹)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Products'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        document.getElementById('crop-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const cropId = document.getElementById('crop-id').value;
+            const cropName = document.getElementById('crop-name').value;
+
+
+            if (existingCropNames.has(cropName) && !cropId) {
+                alert('Product with the same name already exists. Please use a different name.'); // Alert on duplicate name
+                return;
+            }
+
+            const cropPrice = document.getElementById('crop-price').value;
+            const cropQuantity = document.getElementById('crop-quantity').value;
+            const cropImage = document.getElementById('crop-image').files[0];
+
+            const formData = new FormData();
+            formData.append('name', cropName);
+            formData.append('price', cropPrice);
+            formData.append('quantity', cropQuantity);
+            if (cropImage) {
+                formData.append('image', cropImage);
+            }
+
+            const url = cropId ? `/api/crops/${cropId}` : '/api/crops';
+            const method = cropId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (!cropId) existingCropNames.add(cropName);
+                    alert(data.message);
+                    fetchCrops();
+                    cancelEdit();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => alert('Error: ' + error));
+        });
+
+
+        function editCrop(cropId, cropName, cropPrice, cropQuantity) {
+            document.getElementById('crop-id').value = cropId;
+            document.getElementById('crop-name').value = cropName;
+            document.getElementById('crop-price').value = cropPrice;
+            document.getElementById('crop-quantity').value = cropQuantity;
+            document.getElementById('submit-button').innerText = 'Save Changes';
+            document.getElementById('cancel-button').style.display = 'inline-block';
+        }
+
+
+        function cancelEdit() {
+            document.getElementById('crop-form').reset();
+            document.getElementById('submit-button').innerText = 'Add Crop';
+            document.getElementById('cancel-button').style.display = 'none';
+        }
+
+
+        function deleteCrop(cropId) {
+            if (confirm("Are you sure you want to delete this crop?")) {
+                fetch(`/api/crops/${cropId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        existingCropNames.delete(data.crop_name);
+                        alert(data.message);
+                        fetchCrops();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => alert('Error deleting crop: ' + error));
+            }
+        }
+
+
+        function downloadSalesReport() {
+            fetch('/download_sales_report')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'sales_report.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                })
+                .catch(error => alert('Error downloading sales report: ' + error));
+        }
+
+
+        window.onload = function () {
+            fetchCrops();
+        };
+    </script>
+</body>
+</html>

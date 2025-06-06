@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            font-family: 'times', sans-serif;
+            margin: 0;
+            padding: 0;
+             background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+               width: 93%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 93%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .item-list {
+            margin: 20px 0;
+        }
+
+        .total-amount {
+            font-weight: bold;
+            text-align: right;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Payment</h1>
+    <div class="container">
+        <div class="item-list" id="item-list"></div>
+        <div class="total-amount" id="order-total"></div>
+
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" required placeholder="1234 5678 9012 3456">
+
+        <label for="card-expiry">Expiry Date (MM/YY)</label>
+        <input type="text" id="card-expiry" required placeholder="MM/YY">
+
+        <label for="card-cvc">CVC</label>
+        <input type="text" id="card-cvc" required placeholder="123">
+
+        <button onclick="processPayment()">Pay Now</button>
+    </div>
+
+    <script>
+        function getPaymentDetails() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const total = urlParams.get('total');
+            const items = [];
+
+            const itemIds = urlParams.getAll('id');
+            const quantities = urlParams.getAll('quantity');
+
+            itemIds.forEach((id, index) => {
+                const quantity = quantities[index];
+                items.push({ id: id, quantity: quantity });
+            });
+
+            return { total, items };
+        }
+
+        function displayItems(items) {
+            const itemList = document.getElementById('item-list');
+            if (items.length) {
+                const itemsHTML = items.map(item => `<p>Item ID: ${item.id}, Quantity: ${item.quantity}</p>`).join('');
+                itemList.innerHTML = itemsHTML;
+            } else {
+                itemList.innerHTML = '<p>No items in this order.</p>';
+            }
+        }
+
+
+    async function processPayment() {
+        const cardNumber = document.getElementById('card-number').value.trim();
+        const cardExpiry = document.getElementById('card-expiry').value.trim();
+        const cardCVC = document.getElementById('card-cvc').value.trim();
+
+
+        if (!/^\d{16}$/.test(cardNumber)) {
+            alert("Please enter a valid 16-digit card number.");
+            return;
+        }
+
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry)) {
+            alert("Please enter a valid expiry date in MM/YY format.");
+            return;
+        }
+
+
+        if (!/^\d{3}$/.test(cardCVC)) {
+            alert("Please enter a valid 3-digit CVC.");
+            return;
+        }
+
+
+        const { total, items } = getPaymentDetails();
+        const paymentData = {
+            card_number: cardNumber,
+            card_expiry: cardExpiry,
+            card_cvc: cardCVC,
+            total: total,
+            items: items
+        };
+
+        const response = await fetch('/process_payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(paymentData),
+        });
+
+        if (response.ok) {
+            alert('Payment processed successfully!');
+            window.location.href = '/mypurchases';
+        } else {
+            const errorData = await response.json();
+            alert('Payment failed: ' + errorData.message);
+        }
+    }
+</script>
+
+
+</body>
+</html>

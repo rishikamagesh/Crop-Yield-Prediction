@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4e2d8;
+            font-family: Arial, sans-serif;
+        }
+        .login-container {
+            position: relative;
+            width: 300px;
+            text-align: center;
+        }
+        .farmer {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+        }
+        .farmer-img {
+            width: 100%;
+        }
+        .eye-ball {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            top: 35px;
+        }
+        .eye-ball:nth-child(2) {
+            left: 40px;
+        }
+        .shovel {
+            width: 30px;
+            height: 80px;
+            background: gray;
+            position: absolute;
+            top: 50px;
+            left: 60px;
+            transform-origin: bottom;
+            transition: transform 0.3s;
+        }
+        form {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+        }
+        .btn {
+            background: green;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+        .up .shovel {
+            transform: rotate(-45deg);
+        }
+        .wrong-entry .farmer-img {
+            animation: shake 0.3s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(-50%); }
+            25%, 75% { transform: translateX(-48%); }
+            50% { transform: translateX(-52%); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="farmer">
+            <img src="farmer.png" alt="Farmer" class="farmer-img">
+            <div class="eye-ball"></div>
+            <div class="eye-ball"></div>
+            <div class="shovel"></div>
+        </div>
+        <form>
+            <h2>Farm Login</h2>
+            <input type="text" placeholder="Username" id="username">
+            <input type="password" placeholder="Password" id="password">
+            <button type="button" class="btn">Login</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('#password').focusin(function(){
+                $('form').addClass('up');
+            });
+
+            $('#password').focusout(function(){
+                $('form').removeClass('up');
+            });
+
+            $(document).on("mousemove", function(event) {
+                var dw = $(document).width() / 15;
+                var dh = $(document).height() / 15;
+                var x = event.pageX / dw;
+                var y = event.pageY / dh;
+                $('.eye-ball').css({
+                    width: x,
+                    height: y
+                });
+            });
+
+            $('.btn').click(function(){
+                $('form').addClass('wrong-entry');
+                setTimeout(function(){
+                    $('form').removeClass('wrong-entry');
+                }, 3000);
+            });
+        });
+    </script>
+
+</body>
+</html>

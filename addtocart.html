@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: 'Times', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #cart-items {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .remove-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .remove-button:hover {
+            background-color: #c0392b;
+        }
+
+        .proceed {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: block;
+            width: 20%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .proceed:hover {
+            background-color: #45a049;
+        }
+
+        .total-price {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <div id="cart-items">
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Image</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cart-body">
+            </tbody>
+        </table>
+    </div>
+    <div class="total-price" id="total-price"></div>
+    <button class="proceed" onclick="proceedToCheckout()">Proceed to Checkout</button>
+
+    <script>
+        let cart = [];
+
+        async function fetchCartItems() {
+            const response = await fetch('/api/cart');
+
+            if (response.ok) {
+                cart = await response.json();
+                renderCart();
+            } else {
+                console.error('Error fetching cart items: ', response);
+                document.getElementById('cart-body').innerHTML = '<tr><td colspan="5">Error loading cart items.</td></tr>';
+            }
+        }
+
+        function renderCart() {
+            const cartBody = document.getElementById('cart-body');
+            const totalPriceElement = document.getElementById('total-price');
+            const checkoutButton = document.querySelector('.proceed');
+
+            if (cart.length === 0) {
+                cartBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Your cart is empty!</td></tr>';
+                totalPriceElement.innerHTML = '';
+                checkoutButton.disabled = true;
+                return;
+            } else {
+                checkoutButton.disabled = false;
+            }
+
+            const rows = cart.map(item => `
+                <tr id="item-${item.crop_id}">
+                    <td><img src="./static/images/${item.image || 'default.png'}" alt="${item.stock_name || 'Product Image'}" style="width: 50px; height: 50px;"></td>
+                    <td>${item.stock_name}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td> <!-- Corrected this line to display the quantity -->
+                    <td><button class="remove-button" onclick="removeFromCart(${item.crop_id})">Remove</button></td>
+                </tr>
+            `).join('');
+
+            cartBody.innerHTML = rows;
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('total-price').innerHTML = `Total Price: ₹${total.toFixed(2)}`;
+        }
+
+        async function removeFromCart(id) {
+            if (confirm("Are you sure you want to remove this item from your cart?")) {
+                const response = await fetch(`/api/cart/${id}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    await fetchCartItems();
+                } else {
+                    alert('Error removing item from cart: ' + response.statusText);
+                }
+            }
+        }
+
+        async function proceedToCheckout() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const itemsParam = cart.map(item => `id=${item.crop_id}&quantity=${item.quantity}`).join('&');
+            window.location.href = `/payment?total=${encodeURIComponent(total.toFixed(2))}&${itemsParam}`;
+        }
+
+        window.onload = fetchCartItems;
+    </script>
+</body>
+</html>

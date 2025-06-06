@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Purchases</title>
+    <style>
+        body {
+          font-family: "Times New Roman", Times, serif;
+
+ background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+            margin: 0;
+            padding: 20px;
+            color: #1f2937;
+        }
+
+        h1 {
+            color:rgb(162, 160, 12);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: rgb(162, 160, 12);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .btn {
+            background-color:rgb(162, 160, 12);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-size: 1rem;
+            display: inline-block;
+            margin-top: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background-color:rgb(128, 126, 9);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Purchases</h1>
+    <div class="container">
+        {% if purchases %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Purchase Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr>
+                        <td>{{ purchase.stock_name }}</td>
+                        <td>{{ purchase.quantity }}</td>
+                        <td>${{ purchase.price | round(2) }}</td>
+                        <td>{{ purchase.purchase_date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">No purchases found.</p>
+        {% endif %}
+        <div style="text-align: center;">
+            <a href="/myshopping" class="btn">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>

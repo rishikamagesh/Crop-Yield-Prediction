@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmify Yield Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.onload = function () {
+            let dropdownBtn = document.querySelector(".dropdown-btn");
+            if (dropdownBtn) {
+                dropdownBtn.addEventListener("click", function () {
+                    let dropdown = document.querySelector(".dropdown-content");
+                    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+                });
+            }
+        };
+
+        // Global variables
+        let currentReportPath = '';
+
+        // Show prediction results
+        function showPrediction(prediction, reportPath) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("prediction-container").style.display = "block";
+            document.getElementById("prediction-result").innerHTML = `
+                <p>The predicted yield is: <strong>${prediction} kg/ha</strong></p>
+                <p style="margin-top: 15px; font-size: 17px; color: #666;">Download report for detailed analysis</p>
+            `;
+            currentReportPath = reportPath;
+        }
+
+        // Hide prediction results
+        function hidePrediction() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("prediction-container").style.display = "none";
+        }
+
+        // Download report function
+        function downloadReport() {
+            if (!currentReportPath) return;
+
+            const reportUrl = `/download_report/${currentReportPath}`;
+
+            Swal.fire({
+                title: 'Downloading Report',
+                html: 'Please wait while we prepare your report...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+
+                    fetch(reportUrl)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to download');
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = currentReportPath.split('/').pop();
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Report downloaded successfully, Your Report is also saved in Prediction Reports in User Profile.',
+                                icon: 'success'
+                            });
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to download report: ' + error.message,
+                                icon: 'error'
+                            });
+                        });
+                }
+            });
+        }
+
+        // Chatbot functions
+        function toggleChat() {
+            const chatContainer = document.getElementById("chat-container");
+            if (chatContainer.style.display === "flex") {
+                chatContainer.style.display = "none";
+            } else {
+                chatContainer.style.display = "flex";
+                document.getElementById("user-input").focus();
+            }
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById("user-input");
+            const message = userInput.value.trim();
+            const chatBox = document.getElementById("chat-box");
+
+            if (!message) return;
+
+            // Add user message
+            const userMessage = document.createElement("div");
+            userMessage.className = "message-container user";
+            userMessage.innerHTML = `
+                <p>${message}</p>
+                <i class="fas fa-user"></i>
+            `;
+            chatBox.appendChild(userMessage);
+            userInput.value = "";
+
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Get bot response
+            fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ query: message })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                // Add bot response
+                const botMessage = document.createElement("div");
+                botMessage.className = "message-container bot";
+                botMessage.innerHTML = `
+                    <i class="fas fa-robot"></i>
+                    <p>${data.response}</p>
+                `;
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => {
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "message-container bot";
+                errorMessage.innerHTML = `
+                    <i class="fas fa-robot"></i>
+                    <p>Sorry, I'm having trouble connecting. Please try again later.</p>
+                `;
+                chatBox.appendChild(errorMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        // Event Listeners
+        document.addEventListener("DOMContentLoaded", function () {
+            // Prediction form submission
+            document.getElementById("predictionForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const submitButton = document.getElementById("predict-button");
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitButton.disabled = true;
+
+                fetch("/prediction", {
+                    method: "POST",
+                    body: new FormData(this)
+                })
+                    .then(response => {
+                        if (response.status === 403) {
+                            window.location.href = "/register";
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        submitButton.innerHTML = 'Predict';
+                        submitButton.disabled = false;
+
+                        if (data && data.success) {
+                            showPrediction(data.prediction.toFixed(2), data.report_path);
+                        } else if (data && data.error) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.error,
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        submitButton.innerHTML = 'Predict';
+                        submitButton.disabled = false;
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            icon: 'error'
+                        });
+                    });
+            });
+
+            // Download report button
+            document.getElementById("download-report-btn").addEventListener("click", downloadReport);
+
+            // Chatbot controls
+            document.getElementById("chat-toggle").addEventListener("click", toggleChat);
+            document.getElementById("close-chat").addEventListener("click", toggleChat);
+            document.getElementById("send-message").addEventListener("click", sendMessage);
+            document.getElementById("user-input").addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+    <style>
+        /* CSS Reset for dropdowns */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        html {
+            overflow-y: scroll;
+        }
+
+        body {
+            min-width: 1200px; /* Adjust as needed */
+            overflow-x: hidden;
+            font-family: "Times New Roman", Times, serif;
+            background: url('https://static.vecteezy.com/system/resources/previews/003/234/359/non_2x/empty-farm-at-sunset-time-scene-with-red-barn-and-windmill-free-vector.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            position: relative;
+            margin: 200px auto;
+            z-index: 1;
+            background-color: #4A4541;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+            z-index: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: white;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            grid-column: 1 / -1;
+        }
+
+        .predictbutton {
+            color: white;
+            padding: 10px 30px;
+            border: 2px solid white;
+            border-radius: 3px;
+            cursor: pointer;
+            background-color: #4A4541;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .predictbutton:hover {
+            border-color: #285B3D;
+            background-color: #285B3D;
+        }
+
+        /* Overlay and Prediction Container */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .prediction-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            color: #333;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+        }
+
+        .prediction-container h2 {
+            color: #285B3D;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #285B3D;
+            padding-bottom: 10px;
+        }
+
+        .prediction-box {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .prediction-box strong {
+            font-weight: bold;
+            color: #285B3D;
+            font-size: 20px;
+        }
+
+        .prediction-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .prediction-button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .download-btn {
+            background-color: #285B3D;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background-color: #1e4630;
+        }
+
+        .close-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .close-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Chatbot Styles */
+        .bot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #285B3D;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+
+        .bot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .bot-icon i {
+            font-size: 30px;
+            color: white;
+        }
+
+        .chat-container {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 320px;
+            max-height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid #285B3D;
+            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #285B3D;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .chat-header i {
+            margin-right: 10px;
+            font-size: 25px;
+        }
+
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+
+        .message-container {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .message-container.bot {
+            justify-content: flex-start;
+        }
+
+        .message-container.user {
+            justify-content: flex-end;
+        }
+
+        .message-container i {
+            font-size: 24px;
+            margin-right: 5px;
+            color: #285B3D;
+            align-self: flex-end;
+            margin-left: 5px;
+        }
+
+        .message-container p {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin: 0;
+        }
+
+        .message-container.bot p {
+            background: #4A4541;
+            color: white;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .message-container.user p {
+            background: #285B3D;
+            color: white;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #f5f5f5;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .input-area button {
+            background: #285B3D;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .input-area button:hover {
+            background: #1e4630;
+        }
+
+        /* Force all select dropdowns to open downward consistently */
+        select {
+            position: relative;
+            z-index: 1;
+            -webkit-appearance: menulist !important;
+            -moz-appearance: menulist !important;
+            appearance: menulist !important;
+        }
+
+        /* Remove any transforms that might affect positioning */
+        .form-group {
+            transform: none !important;
+        }
+
+        /* Ensure dropdown options appear below the select */
+        select option {
+            position: static !important;
+            transform: none !important;
+        }
+
+        .viewport-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: darkgreen;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            height: 90px;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .navbar a:hover {
+            background-color: #ffcc00;
+            color: black;
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            padding-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr; /* Stack dropdowns on small screens */
+            }
+
+            .navbar {
+                display: none; /* Hide navbar on small screens */
+            }
+
+            .chat-container {
+                width: 90%; /* Make chat container responsive */
+                right: 5%; /* Align chat container on small screens */
+            }
+        }
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right:10px;
+}
+
+.dropbtn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown-content a {
+    color: #285B3D;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s;
+    font-size:17px;
+}
+
+.dropdown-content a:hover {
+    background-color: #ffcc00;
+    color: black;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.dropdown .dropdown-btn {
+    background-color: transparent; /* Makes the button background transparent */
+    color: white; /* Text color remains white */
+    border: none; /* No border */
+    padding: 10px;
+    font-size: 18px;
+    display: flex; /* Enables flexbox */
+    align-items: center; /* Vertically centers elements */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Adjust name styling specifically */
+.user-name {
+    color: rgb(238, 246, 242); /* Sets the text color */
+    font-weight: bold; /* Makes the text bold */
+    margin-left: 5px; /* Adds margin left to separate from the image */
+}
+
+/* Add this if you want the dropdown button to look more compact */
+.profile-image {
+    width: 40px; /* Set a fixed width for the profile image */
+    height: 40px; /* Set a fixed height for the profile image */
+    border-radius: 50%; /* Makes the image round */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    margin-right: 10px; /* Space between image and name */
+}
+    </style>
+</head>
+<body>
+    <!-- Overlay for prediction results -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Prediction Results Container -->
+    <div class="prediction-container" id="prediction-container">
+        <h2>Prediction Results</h2>
+        <div class="prediction-box" id="prediction-result">
+            <!-- Results will be inserted here -->
+        </div>
+        <div class="prediction-buttons">
+            <button class="prediction-button download-btn" id="download-report-btn">Download Report</button>
+            <button class="prediction-button close-btn" onclick="hidePrediction()">Close</button>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="viewport-header">
+        <img class="logo" src="{{ url_for('static', filename='images/logo1p.png') }}" alt="Farmify Logo" />
+        <nav class="navbar">
+            <a href="{{ url_for('farmify') }}">Home</a>
+            <a href="{{ url_for('about_farm') }}">About</a>
+            <a href="{{ url_for('prediction') }}">Prediction</a>
+            <a href="{{ url_for('myshopping') }}"><span>FarmiBuy</span></a>
+            <a href="{{ url_for('crop') }}"><span>FarmiSale</span></a>
+        </nav>
+        <div class="dropdown">
+            <button class="dropdown-btn" aria-label="User menu">
+                {% if user.profile_image_url %}
+                <img src="{{ user.profile_image_url }}" alt="User Profile" class="profile-image" />
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Default Profile" class="profile-image" />
+                {% endif %}
+                <span class="user-name">{{ user.name }}</span>
+                <i class="fas fa-chevron-down" style="margin-left: 5px;"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('dashboard') }}">Profile</a>
+                <a href="{{ url_for('myaddcart') }}">Your Cart</a>
+                <a href="{{ url_for('mypurchases')}}">Your Purchases</a>
+                <a href="{{ url_for('prediction_reports') }}">Prediction Report</a>
+                <a href="{{ url_for('sales_reports') }}">Sales Report</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Yield Prediction</h1>
+        <form method="POST" id="predictionForm" action="/prediction">
+            <div class="form-group">
+                <select id="year" name="year" required>
+                    <option value="" disabled selected>Year</option>
+                    {% for year in range(2000, 2027) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <select id="area" name="area" required>
+                    <option value="" disabled selected>Area</option>
+                    {% for country in countries %}
+                    <option value="{{ country }}">{{ country }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <select id="item" name="item" required>
+                    <option value="" disabled selected>Crop</option>
+                    {% for crop in crops %}
+                    <option value="{{ crop }}">{{ crop }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pesticides_tonnes">Pesticide Usage (Tonnes):</label>
+                <input type="number" id="pesticides_tonnes" name="pesticides_tonnes" step="0.01" placeholder="e.g., 2.5" required />
+            </div>
+
+            <div class="form-group">
+                <label for="avg_temp">Average Temperature (°C):</label>
+                <input type="number" id="avg_temp" name="avg_temp" step="0.01" placeholder="e.g., 25.5" required />
+            </div>
+
+            <div class="form-group">
+                <label for="rainfall">Average Rainfall (mm/year):</label>
+                <input type="number" id="rainfall" name="rainfall" step="0.01" placeholder="e.g., 1500" required />
+            </div>
+
+            <div class="button-container">
+                <button type="submit" class="predictbutton" id="predict-button">Predict</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Chatbot Icon -->
+    <div class="bot-icon" id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Chatbot Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div>
+                <i class="fas fa-robot"></i>
+                <span style="font-size: 24px; font-weight: bold;">FarmBuddy</span>
+            </div>
+            <button class="chat-close-btn" id="close-chat">×</button>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message-container bot">
+                <i class="fas fa-robot"></i>
+                <p>Welcome to Farmify! I'm FarmBuddy. You can ask me about crop predictions, agricultural tips, and more.</p>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." />
+            <button id="send-message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

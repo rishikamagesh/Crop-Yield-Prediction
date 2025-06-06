@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Crop Marketplace</title>
+    <style>
+
+:root {
+  --primary: #2ecc71;
+  --secondary: #34495e;
+  --accent: #e67e22;
+  --background: #f8f9fa;
+  --text: #2c3e50;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family:'Times New Roman', Times, serif;
+background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+
+.logo {
+  width: 140px;
+  height: 140px;
+  left: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+.form-container h2 {
+  color: var(--secondary);
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+form input,
+form textarea {
+  padding: 1rem;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+form button {
+  background-color:darkgreen;
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+form button:hover {
+  background-color:darkgreen;
+  transform: translateY(-2px);
+}
+.crop-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.crop-details h3 {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 1rem;
+}
+
+.crop-details p {
+  margin: 0;
+  color: #666;
+}
+
+.crop-details .price {
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.crop-details button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+}
+
+.crop-details button:first-of-type {
+  background-color:darkgreen;
+  color: #ffffff;
+  width: 150px;
+}
+
+.crop-details button:last-of-type {
+  background-color:#971717;
+  color: white;
+  width: 150px;
+}
+
+
+.footer {
+  margin-top: 100px;
+  background-color: black;
+  color: #fefefe;
+
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+
+.footer .heading2 {
+  color: #fefefe;
+  max-width: 1010px;
+  width: 90%;
+  text-transform: uppercase;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.footer .content2 {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1.5rem;
+}
+
+.footer .content2 p {
+  margin-bottom: 1.3rem;
+}
+
+.footer .content2 a {
+  text-decoration: none;
+  color: #fefefe;
+}
+
+.footer .content2 a:hover {
+  border-bottom: 1px solid #971717;
+}
+
+.footer .content2 h4 {
+  margin-bottom: 1.3rem;
+  font-size: 19px;
+}
+
+footer {
+  text-align: center;
+
+}
+
+footer hr {
+  margin: 2rem 0;
+}
+
+@media (max-width: 767px) {
+  .footer .content {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  .footer {
+    position: unset;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .footer .content,
+  .footer {
+    font-size: 14px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .footer {
+    position: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .viewport-header {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .navbar {
+    margin: 1rem 0;
+  }
+
+  .crop {
+    grid-template-columns: 1fr;
+  }
+
+  .buttonone {
+    width: 100%;
+    justify-content: center;
+  }
+}
+#addCrop.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1000px;
+  padding: 2rem;
+}
+
+.hero-image {
+  width: 100%;
+  height: 400px;
+  background-image: url('https://i.pinimg.com/474x/fe/d3/84/fed384bf87aa536f37ab0380d0e6ee5c.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+}
+
+.form-container {
+  max-width: 400px;
+}
+
+.form-container h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+form input,
+form textarea {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+}
+#cropsListSection {
+  max-width:900px;
+  padding: 1.5rem;
+}
+
+.crop {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: none;
+}
+
+.crop img {
+  width: 150px;
+  height: 150px;
+}
+.crop-actions {
+  display: none;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.save-btn, .delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color:darkgreen;
+  color: white;
+}
+
+.delete-btn {
+  background-color:#e74c3c;
+  color: white;
+}
+
+.crop-details [contenteditable="true"] {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.crop-details [contenteditable="true"]:hover {
+  background-color: #f5f5f5;
+}
+
+.crop-details button {
+  display: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.crop:hover .crop-details button {
+  display: inline-block;
+}
+
+.crop-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.crop.edit-mode .crop-details {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.edit-form {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.edit-form.active {
+  display: flex;
+}
+
+.edit-form input,
+.edit-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.edit-form-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-form-buttons button {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  #addCrop.container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .hero-image {
+    height: 200px;
+  }
+
+  .form-container {
+    max-width: 100%;
+  }
+}
+
+.navbar {
+  display: flex;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 18px;
+  padding: 10px;
+  margin-left: 300px;
+  font-stretch: expanded;
+}
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bolder;
+  text-shadow: 1px 1px black;
+}
+.navbar a:hover {
+  transition-duration: 0.4s;
+  background-color: #ffcc00;
+}
+
+.viewport-header {
+
+  width: 100%;
+  display: flex;
+background-color: darkgreen;
+  align-items: center;
+  z-index: 1;
+  border-bottom: 1px solid rgba(256, 256, 256, 0.1);
+  height: 14%;
+
+}
+    </style>
+  </head>
+  <body>
+<header class="viewport-header">
+        <img
+          class="logo"
+          src="./images/logo1p.png"
+          alt="Farmify
+        Logo"
+        />
+        <nav class="navbar">
+          <a href="./farmify.html">Home</a>
+          <a href="./aboufarmt.html">About Us</a>
+          <a href="http://127.0.0.1:8000/">Prediction</a>
+          <a href="./shopping.html">Buy</a>
+          <a href="./prc.html">Sale</a>
+        </nav>
+
+
+      </header>
+<div class="container" id="addCrop">
+  <div class="hero-image"></div>
+  <div class="form-container">
+    <h2>Upload your products</h2>
+    <form id="sellForm">
+      <input type="text" id="cropName" placeholder="Crop Name" required />
+      <input type="number" id="cropPrice" placeholder="Price (in ₹)" required />
+      <input type="file" id="cropImage" accept="image/*" required />
+      <input type="number" id="cropQuantity" placeholder="Quantity" required />
+      <button type="submit" id="submitBtn">Add Crop</button>
+    </form>
+  </div>
+</div>
+
+<div class="container" id="cropsListSection">
+  <div style="width:700px;" class="crops-container">
+    <h2>Added Crops</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr ; gap: 3rem" id="cropsList"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", loadCrops);
+
+  let editId = null;
+
+  document.getElementById("sellForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const cropName = document.getElementById("cropName").value.trim();
+    const cropPrice = parseFloat(document.getElementById("cropPrice").value);
+    const cropQuantity = parseInt(document.getElementById("cropQuantity").value);
+    const cropImage = document.getElementById("cropImage").files[0];
+
+    if (!cropName || isNaN(cropPrice) || cropPrice < 0 || isNaN(cropQuantity) || cropQuantity < 1) {
+      alert("Please enter valid details. Price & Quantity cannot be negative or empty.");
+      return;
+    }
+
+    if (!editId && !cropImage) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      let crops = JSON.parse(localStorage.getItem("crops")) || [];
+
+      if (editId) {
+        const cropIndex = crops.findIndex(crop => crop.id === editId);
+        if (cropIndex !== -1) {
+          crops[cropIndex].name = cropName;
+          crops[cropIndex].price = cropPrice;
+          crops[cropIndex].quantity = cropQuantity;
+          if (cropImage) {
+            crops[cropIndex].image = e.target.result;
+          }
+        }
+        editId = null;
+        document.getElementById("submitBtn").innerText = "Add Crop";
+      } else {
+        const cropData = {
+          id: Date.now(),
+          name: cropName,
+          price: cropPrice,
+          quantity: cropQuantity,
+          image: e.target.result
+        };
+        crops.push(cropData);
+      }
+
+      localStorage.setItem("crops", JSON.stringify(crops));
+      loadCrops();
+      document.getElementById("sellForm").reset();
+    };
+
+    if (cropImage) {
+      reader.readAsDataURL(cropImage);
+    } else {
+      reader.onload();
+    }
+  });
+
+function renderCrop(crop) {
+  return `
+    <div class="crop" data-id="${crop.id}">
+      <img src="${crop.image || 'default-placeholder.png'}" alt="${crop.name}">
+      <div class="crop-details">
+        <h3>${crop.name}</h3>
+        <p>Quantity: ${crop.quantity}</p>
+        <p class="price">₹${crop.price}</p>
+        <button onclick="editCrop(${crop.id})" class="edit-btn">Edit</button>
+        <button onclick="deleteCrop(${crop.id})" class="delete-btn">Delete</button>
+      </div>
+    </div>
+  `;
+}
+
+  function loadCrops() {
+    const cropsList = document.getElementById("cropsList");
+    if (!cropsList) {
+      console.error("Error: 'cropsList' not found in the document.");
+      return;
+    }
+
+    const crops = JSON.parse(localStorage.getItem("crops")) || [];
+    cropsList.innerHTML = crops.length ? crops.map(renderCrop).join("") : "<p>No crops added yet.</p>";
+  }
+
+  function editCrop(id) {
+    const crops = JSON.parse(localStorage.getItem("crops")) || [];
+    const crop = crops.find(crop => crop.id === id);
+
+    if (crop) {
+      document.getElementById("cropName").value = crop.name;
+      document.getElementById("cropPrice").value = crop.price;
+      document.getElementById("cropQuantity").value = crop.quantity;
+      editId = id;
+      document.getElementById("submitBtn").innerText = "Update Crop";
+    }
+  }
+
+  function deleteCrop(id) {
+    if (confirm('Are you sure you want to delete this item?')) {
+      let crops = JSON.parse(localStorage.getItem("crops")) || [];
+      crops = crops.filter(crop => crop.id !== id);
+      localStorage.setItem("crops", JSON.stringify(crops));
+      loadCrops();
+    }
+  }
+</script>
+
+  </body>
+  <div class="footer">
+
+      <div class="content2">
+        <div class="services2">
+          <h4>Services</h4>
+          <p><a href="#">Prediction</a></p>
+          <p><a href="#">Chat Bot</a></p>
+          <p><a href="#">Buy And Sell Products</a></p>
+
+        </div>
+        <div class="social-media2">
+          <h4>Social</h4>
+          <p>
+            <a href="#"
+              ><i class="fab fa-linkedin"></i> Linkedin</a
+            >
+          </p>
+          <p>
+            <a href="#"
+              ><i class="fab fa-twitter"></i> Twitter</a
+            >
+          </p>
+          <p>
+            <a href="https://github.com/farazc60"
+              ><i class="fab fa-github"></i> Github</a
+            >
+          </p>
+          <p>
+            <a href="https://www.facebook.com/codewithfaraz"
+              ><i class="fab fa-facebook"></i> Facebook</a
+            >
+          </p>
+          <p>
+            <a href="https://www.instagram.com/codewithfaraz"
+              ><i class="fab fa-instagram"></i> Instagram</a
+            >
+          </p>
+        </div>
+        <div class="links">
+          <h4>Quick links</h4>
+          <p><a href="#">Home</a></p>
+          <p><a href="#">About</a></p>
+          <p><a href="#">Prediction</a></p>
+          <p><a href="#">Buy And Sell</a></p>
+        </div>
+        <div class="details">
+          <h4 class="address">Address</h4>
+          <p>
+            Chennai,Tamilnadu,India<br />
+
+          </p>
+          <h4 class="mobile">Mobile</h4>
+          <p><a href="#">+91-12345678</a></p>
+          <h4 class="mail">Email</h4>
+          <p><a href="#">farmify@gamil.com</a></p>
+        </div>
+      </div>
+      <footer>
+        <hr />
+        © 2025 farmify
+      </footer>
+</html>

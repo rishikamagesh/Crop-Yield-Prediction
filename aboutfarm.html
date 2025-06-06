@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Crop Yield Prediction</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+
+      rel="stylesheet"
+    />
+    <style>
+
+        body{
+            margin:0;
+            padding:0;
+        }
+        .navbar {
+  display: flex;
+  font-family: Times, serif;
+
+  padding: 10px;
+  margin-left: 380px;
+  font-stretch: expanded;
+}
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bolder;
+  text-shadow: 1px 1px black;
+}
+.navbar a:hover {
+  transition-duration: 0.4s;
+  background-color:#ffcc00;
+}
+
+.viewport-header {
+  width: 100%;
+  display: flex;
+background-color:darkgreen;
+  align-items: center;
+  z-index: 1;
+  border-bottom: 1px solid rgba(256, 256, 256, 0.1);
+  height:100px;
+  padding-top: 10px;
+}
+.logo {
+  width: 140px;
+  height: 130px;
+  left: 0;
+}
+.buttonthird {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 50px;
+  background-color: #ffcc00;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-right: 15px;
+  gap: 10px;
+  border: 2px solid black;
+  margin-left: 300px;
+  margin-top: 20px;
+}
+
+.buttonthird:hover {
+  background-color: white;
+  color: #ffcc00;
+}
+        .footer {
+            margin-top:50px;
+  background-color:darkgreen;
+  color: #fefefe;
+
+  width: 100%;
+
+}
+
+.footer .heading2 {
+  color: #fefefe;
+  max-width: 1010px;
+  width: 90%;
+  text-transform: uppercase;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.footer .content2 {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1.5rem;
+}
+
+.footer .content2 p {
+  margin-bottom: 1.3rem;
+}
+
+.footer .content2 a {
+  text-decoration: none;
+  color: #fefefe;
+}
+
+.footer .content2 a:hover {
+  border-bottom: 1px solid lightgreen;
+}
+
+.footer .content2 h4 {
+  margin-bottom: 1.3rem;
+  font-size: 19px;
+}
+
+
+
+footer hr {
+  margin: 2rem 0;
+}
+
+@media (max-width: 767px) {
+  .footer .content {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  .footer {
+    position: unset;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .footer .content,
+  .footer {
+    font-size: 14px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .footer {
+    position: unset;
+  }
+}
+
+        body{
+            height: 100%;
+  background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+padding:0;
+margin:0;
+        }
+
+#about-section {
+  height: auto;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.about-left {
+  height: auto;
+  padding: 20px;
+  transform: translateY(50px);
+}
+.about-left img {
+  width: 500px;
+  height: 500px;
+}
+
+.about-right {
+  padding-right: 70px;
+
+  padding-left: 40px;
+  align-content: center;
+}
+
+.about-right ul li {
+  display: flex;
+
+  align-items: center;
+}
+
+.about-right h2,
+h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+  color: #ffcc00;
+  text-shadow: 1px 1px black;
+  margin-bottom: 5px;
+}
+
+.about-right p {
+  color: black;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+  line-height: 26px;
+  text-align: justify;
+  font-size: 16px;
+}
+
+.about-right .address {
+  margin: 25px 0;
+}
+
+.about-right .address ul li {
+  margin-bottom: 5px;
+}
+
+.address .address-logo {
+  margin-right: 15px;
+
+  color: #e74d06;
+}
+
+.address .saprater {
+  margin: 0 35px;
+}
+
+.about-right .expertise ul {
+  width: 80%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-inline-start: 0;
+}
+
+.expertise h3 {
+  margin-bottom: 5px;
+}
+
+.expertise .expertise-logo {
+  font-size: 19px;
+
+  margin-right: 10px;
+
+  color: #3e6545;
+}
+.chat {
+  color: black;
+
+  line-height: 26px;
+
+  font-size: 16px;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+}
+
+.chat ul {
+  padding-inline-start: 0;
+}
+
+.heading-featured-in {
+  color: #ffcc00;
+  font-weight: bolder;
+  margin-left: 600px;
+  margin-top: 90px;
+  font-size: 35px;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+}
+.heading-featured-in1 {
+  color: #ffcc00;
+  font-weight: bolder;
+  left: 0;
+  margin-top: 90px;
+  font-size: 35px;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+}
+.logos {
+  margin-left: 100px;
+}
+.logos img {
+  width: 100px;
+  height: 170px;
+  gap: 70px;
+}
+/* feature */
+.team-section {
+  text-align: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.heading {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  font-family: "Arial", sans-serif;
+}
+
+.team-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.team-member {
+  width: 250px;
+  text-align: center;
+  position: relative;
+}
+
+.team-img {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.team-img img {
+  width: 350px;
+
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.team-img:hover .overlay {
+  display: flex;
+  opacity: 1;
+}
+
+.overlay h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  margin-left: 90px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+}
+
+.social-icon.instagram {
+  background-color: #e4405f;
+}
+
+.social-icon.whatsapp {
+  background-color: #25d366;
+}
+
+.social-icon:hover {
+  opacity: 0.7;
+}
+ .image-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 450px;
+    display: block;
+  }
+
+  .about-text {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-weight: bold;
+    color:black;
+    text-shadow: 2px 2px 5px black;
+    font-family: "Times New Roman", serif;
+  }
+    </style>
+    </head>
+</body>
+ <header class="viewport-header">
+
+  <img class="logo" src="{{ url_for('static', filename='images/logo1p.png') }}" alt="Farmify Logo" />
+  <nav class="navbar fade-in">
+  <a href="{{ url_for('farmify') }}">Home</a>
+            <a href="{{ url_for('about_farm') }}">About</a>
+            <a href="{{ url_for('prediction') }}">Prediction</a>
+            <a href="{{ url_for('myshopping') }}">FarmiBuy</a>
+            <a href="{{ url_for('crop') }}">FarmiSale</a>
+            </nav>
+      </header>
+<div class="aboutcontainer">
+  <div class="image-container">
+    <img src="{{ url_for('static', filename='images/aboutimage.jpg') }}" alt="About Img" />
+
+  </div>
+</div>
+ <section class="section-featured">
+      <div class="container">
+        <h2 class="heading-featured-in">AS FEATURED IN</h2>
+        <div class="logos">
+          <img style="width: 200px; height: 170px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo2.jpg') }}" alt="business-insider" />
+<img style="width: 200px; height: 170px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo3.jpg') }}" alt="forbes" />
+<img style="width: 200px; height: 160px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo4.jpg') }}" alt="usa today" />
+<img style="width: 200px; height: 150px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logo7.jpg') }}" alt="usa today" />
+<img style="width: 220px; height: 160px; margin-left: 30px; margin-right: 30px;" src="{{ url_for('static', filename='images/logomine.jpg') }}" alt="usa today" />
+
+        </div>
+      </div>
+    </section>
+   <h2 class="heading-featured-in fade-in-section">ABOUT FARMIFY</h2>
+    <section id="about-section">
+        <div class="about-left fade-in-section">
+            <img src="{{ url_for('static', filename='images/WhatsApp Image 2025-01-15 at 8.59.46 AM.jpeg') }}" alt="About Img" />
+        </div>
+
+
+      <div style="margin-top: 50px" class="about-right">
+        <h2 style="color: #ffcc00">Introduction</h2>
+
+        <p>
+          Welcome to Farmify your trusted partner in revolutionizing agriculture
+          through data-driven insights and innovative solutions.
+        </p>
+        <h3>Our Story</h3>
+        <p>
+          Born from a vision to empower farmers with technology, Farmify was
+          created to help you make smarter decisions about your crops. We
+          understand the challenges of farming in a world of changing climates,
+          unpredictable markets, and limited resources. That’s why we’re here to
+          simplify the process, offering insights and tools to help you maximize
+          your harvests with ease.
+        </p>
+        <h3>What we known for</h3>
+        <div class="chat">
+          <ul>
+            <li>
+              <span class="chat-logo"></span>
+              <i
+                style="margin-right: 10px; color: #3e6545"
+                class="fa-solid fa-arrow-right"
+              ></i>
+              Tailored Crop Recommendations: Find the best crops to grow based
+              on your location, soil type, and weather conditions.
+            </li>
+            <li>
+              <span class="chat-logo"></span>
+              <i
+                style="margin-right: 10px; color: #3e6545"
+                class="fa-solid fa-user-secret"
+              ></i>
+
+              Smart Chatbot Assistance: Our intelligent chatbot is available
+              24/7 to guide you through crop selection, answer queries, and
+              provide farming tips.
+            </li>
+            <li>
+              <span class="chat-logo"></span>
+              <i
+                style="margin-right: 10px; color: #3e6545; text-align: start"
+                class="fa-solid fa-cart-shopping"
+              ></i>
+              Buy and Sell Products: Easily trade crops, seeds, fertilizers, and
+              more through our secure marketplace. Connect directly with buyers
+              and sellers, cutting out middlemen and maximizing profits.
+            </li>
+          </ul>
+        </div>
+        <div class="expertise">
+          <h3>My Expertise</h3>
+
+          <ul>
+            <li>
+              <span class="expertise-logo">
+                <i class="fa-solid fa-tractor"></i>
+              </span>
+
+              <p>Accuracy</p>
+            </li>
+
+            <li>
+              <span class="expertise-logo">
+                <i class="fa-solid fa-link"></i>
+              </span>
+
+              <p>Simplicity</p>
+            </li>
+
+            <li>
+              <span class="expertise-logo">
+                <i class="fa-solid fa-comments"></i>
+              </span>
+
+              <p>Support</p>
+            </li>
+
+            <li>
+              <span class="expertise-logo">
+                <i class="fa-solid fa-people-arrows"></i>
+              </span>
+
+              <p>Community</p>
+            </li>
+          </ul>
+        </div>
+        <button class="buttonthird">
+          <i class="fa-duotone fa-solid fa-arrow-right"></i>
+          <span>Know More About Us</span>
+        </button>
+      </div>
+    </section>
+    <div class="team-section">
+  <h2 class="heading-featured-in1">MEET OUR TEAM</h2>
+
+  <div style="margin-top: 50px;" class="team-container">
+    <div class="team-member">
+      <div class="team-img">
+                            <img style="height:100%;" src="{{ url_for('static', filename='images/farmer7.jpg') }}" alt="Dr. Amy Smith" />
+
+        <div class="overlay">
+          <h3>Prediction Analyst</h3>
+        </div>
+      </div>
+      <p
+        style="
+          color: #3e6545;
+          font-weight: bold;
+          font-size: 16px;
+          text-align: center;
+          margin-left: 100px;
+        "
+      >
+        Dr. Redwick
+      </p>
+      <div class="social-icons">
+        <a href="#" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" style="background-color:skyblue"class="social-icon">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="team-member">
+      <div class="team-img">
+         <img src="{{ url_for('static', filename='images/farmer2.jpg') }}" alt="Dr. Amy Smith" />
+        <div class="overlay">
+          <h3>Scientist</h3>
+        </div>
+      </div>
+      <p
+        style="
+          color: #3e6545;
+          font-weight: bold;
+          font-size: 16px;
+          text-align: center;
+          margin-left: 100px;
+        "
+      >
+        Dr. Edison
+      </p>
+      <div class="social-icons">
+        <a href="#" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" style="background-color:skyblue"class="social-icon twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="team-member">
+      <div class="team-img">
+        <img src="{{ url_for('static', filename='images/farmer4.jpg') }}" alt="Dr. Amy Smith" />
+        <div class="overlay">
+          <h3>Researcher</h3>
+        </div>
+      </div>
+      <p
+        style="
+          color: #3e6545;
+          font-weight: bold;
+          font-size: 16px;
+          text-align: center;
+          margin-left: 100px;
+        "
+      >
+        Dr. Amy Smith
+      </p>
+      <div class="social-icons">
+        <a href="#" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" style="background-color:skyblue" class="social-icon twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+<div class="footer">
+
+      <div class="content2">
+        <div class="services2">
+          <h4>Services</h4>
+          <p><a href="#">Prediction</a></p>
+          <p><a href="#">Chat Bot</a></p>
+          <p><a href="#">Buy And Sell Products</a></p>
+
+        </div>
+        <div class="social-media2">
+          <h4>Social</h4>
+          <p>
+            <a href="#"
+              ><i class="fab fa-linkedin"></i> Linkedin</a
+            >
+          </p>
+          <p>
+            <a href="#"
+              ><i class="fab fa-twitter"></i> Twitter</a
+            >
+          </p>
+          <p>
+            <a href="https://github.com/farazc60"
+              ><i class="fab fa-github"></i> Github</a
+            >
+          </p>
+          <p>
+            <a href="https://www.facebook.com/codewithfaraz"
+              ><i class="fab fa-facebook"></i> Facebook</a
+            >
+          </p>
+          <p>
+            <a href="https://www.instagram.com/codewithfaraz"
+              ><i class="fab fa-instagram"></i> Instagram</a
+            >
+          </p>
+        </div>
+        <div class="links">
+          <h4>Quick links</h4>
+          <p><a href="#">Home</a></p>
+          <p><a href="#">About</a></p>
+          <p><a href="#">Prediction</a></p>
+          <p><a href="#">Buy And Sell</a></p>
+        </div>
+        <div class="details">
+          <h4 class="address">Address</h4>
+          <p>
+            Chennai,Tamilnadu,India<br />
+
+          </p>
+          <h4 class="mobile">Mobile</h4>
+          <p><a href="#">+91-12345678</a></p>
+          <h4 class="mail">Email</h4>
+          <p><a href="#">farmify@gamil.com</a></p>
+        </div>
+      </div>
+
+        <hr />
+        <p style="padding-left:700px;margin:0;">© 2025 farmify</p>
+      </footer>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agriculture Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-a5rBq2N9P7+nKOB38mEBr21N5P+5i1u3/48CEVAcbqfZJyW7n7YBQl5ld7MWU45G57WzV+3WZn2c0m+4/88U4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Roboto" rel="stylesheet">
+    <style>
+        *, *:after, *:before {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzMDc0M3wwfDF8c2VhcmNofDEwfHxlbGxvd3xlbnwwfHx8fDE2ODk2OTk5NjM&ixlib=rb-4.0.3&q=80&w=1080');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-family: 'Dancing Script', cursive;
+            margin: 20px 0;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 400px;
+            padding: 20px 40px;
+            margin: 50px auto;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 30px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            transition: 0.3s;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 40px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #777;
+            padding: 5px 0;
+            color: #555;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus,
+        .form-control:valid {
+            outline: none;
+            border-bottom: 1px solid #4CAF50;
+        }
+
+        .form-control:focus + .form-label,
+        .form-control:valid + .form-label {
+            font-size: 12px;
+            color: #4CAF50;
+            transform: translateY(-15px);
+        }
+
+        .btn {
+            background: #4CAF50;
+            padding: 10px;
+            width: 150px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #388e3c;
+        }
+
+        .alert {
+            color: #f00;
+            font-size: 16px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Agriculture Login</h1>
+    <div class="form-container">
+        <form id="login-form">
+            <div class="form-group">
+                <input required="required" class="form-control" id="username" />
+                <label class="form-label">Username</label>
+            </div>
+            <div class="form-group">
+                <input required="required" type="password" id="password" class="form-control" />
+                <label class="form-label">Password</label>
+                <p id="alert" class="alert">Invalid Credentials..!!</p>
+            </div>
+            <button type="button" class="btn" id="login-button">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-button').addEventListener('click', function () {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const alertMessage = document.getElementById('alert');
+
+            if (username !== "admin" || password !== "password") {
+                alertMessage.style.display = 'block';
+            } else {
+                alertMessage.style.display = 'none';
+                alert("Login successful!");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+from flask import Flask, render_template, request, send_file
+import pandas as pd
+import pickle
+from flask_sqlalchemy import SQLAlchemy
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
+dtr = pickle.load(open('dtr_model.pkl', 'rb'))
+preprocessor = pickle.load(open('preprocesser.pkl', 'rb'))
+
+app = Flask(__name__)
+
+DATABASE_URL = 'mysql+pymysql://root:Elsarishi%4026@localhost:3306/project'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+class PredictionResult(db.Model):
+    __tablename__ = 'predictions_crop'
+    id = db.Column(db.Integer, primary_key=True)
+    Year = db.Column(db.Integer, nullable=False)
+    Area = db.Column(db.String(255), nullable=False)
+    Item = db.Column(db.String(255), nullable=False)
+    pesticides_tonnes = db.Column(db.Float, nullable=False)
+    avg_temp = db.Column(db.Float, nullable=False)
+    average_rain_fall_mm_per_year = db.Column(db.Float, nullable=False)
+    prediction = db.Column(db.Float, nullable=False)
+
+years = [1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+         2001, 2002, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013]
+countries = ['Albania', 'Algeria', 'Angola', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Belarus', 'Belgium', 'Botswana', 'Brazil']
+crops = ['Maize', 'Potatoes', 'Rice, paddy', 'Sorghum', 'Soybeans', 'Wheat', 'Cassava', 'Sweet potatoes', 'Plantains and others', 'Yams']
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    prediction = None
+    if request.method == 'POST':
+        try:
+            Year = int(request.form['year'])
+            Area = request.form['area']
+            Item = request.form['item']
+            pesticides_tonnes = float(request.form['pesticides_tonnes'])
+            avg_temp = float(request.form['avg_temp'])
+            average_rain_fall_mm_per_year = float(request.form['rainfall'])
+
+            features = pd.DataFrame(
+                [[Year, pesticides_tonnes, avg_temp, average_rain_fall_mm_per_year, Area, Item]],
+                columns=['Year', 'pesticides_tonnes', 'avg_temp', 'average_rain_fall_mm_per_year', 'Area', 'Item']
+            )
+
+            transformed_features = preprocessor.transform(features)
+            prediction = dtr.predict(transformed_features)[0]
+
+            new_entry = PredictionResult(
+                Year=Year,
+                Area=Area,
+                Item=Item,
+                pesticides_tonnes=pesticides_tonnes,
+                avg_temp=avg_temp,
+                average_rain_fall_mm_per_year=average_rain_fall_mm_per_year,
+                prediction=prediction
+            )
+            db.session.add(new_entry)
+            db.session.commit()
+
+        except Exception as e:
+            prediction = f"Error: {e}"
+
+    return render_template(
+        'indexapp.html',
+        years=years,
+        countries=countries,
+        crops=crops,
+        prediction=prediction
+    )
+
+@app.route('/generate_report_pdf/<int:prediction_id>', methods=['GET'])
+def generate_report_pdf(prediction_id):
+    prediction_record = PredictionResult.query.get(prediction_id)
+
+    if prediction_record:
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+
+
+        c.setFont("Helvetica", 12)
+        c.drawString(100, 750, f"Farm Yield Prediction Report")
+        c.drawString(100, 730, f"Year: {prediction_record.Year}")
+        c.drawString(100, 710, f"Area: {prediction_record.Area}")
+        c.drawString(100, 690, f"Crop Item: {prediction_record.Item}")
+        c.drawString(100, 670, f"Pesticides (tonnes): {prediction_record.pesticides_tonnes}")
+        c.drawString(100, 650, f"Avg. Temperature (°C): {prediction_record.avg_temp}")
+        c.drawString(100, 630, f"Average Rainfall (mm/year): {prediction_record.average_rain_fall_mm_per_year}")
+        c.drawString(100, 610, f"Predicted Crop Yield (tons/hectare): {prediction_record.prediction}")
+
+
+        c.showPage()
+        c.save()
+
+
+        buffer.seek(0)
+
+
+        return send_file(buffer, as_attachment=True, download_name="crop_yield_report.pdf", mimetype="application/pdf")
+
+    return "Prediction not found", 404
+
+
+app = Flask(__name__)
+CORS(app)
+
+try:
+    data = pd.read_csv("yield_df.csv")
+except FileNotFoundError:
+    data = pd.DataFrame()
+
+def get_info(area, attribute):
+    """Retrieve area-specific data for rainfall, pesticides, or temperature."""
+    filtered_data = data[data['Area'].str.strip().str.lower() == area.lower()]
+    if not filtered_data.empty:
+        row = filtered_data.iloc[0]
+        attributes = {
+            "rainfall": f"The average rainfall in {area} is {row['average_rain_fall_mm_per_year']} mm/year.",
+            "pesticides": f"The pesticide usage in {area} is {row['pesticides_tonnes']} tonnes.",
+            "temperature": f"The average temperature in {area} is {row['avg_temp']}°C.",
+        }
+        return attributes.get(attribute, f"Sorry, data for {attribute} in {area} is unavailable.")
+    return f"Sorry, I couldn't find data for {area}."
+
+def get_pesticides_info(area):
+    """Retrieve pesticide usage data for a given area."""
+    filtered_data = data[data['Area'].str.strip().str.lower() == area.lower()]
+    if not filtered_data.empty:
+        row = filtered_data.iloc[0]
+        return f"The pesticide usage in {area} is {row['pesticides_tonnes']} tonnes."
+    return f"Sorry, I couldn't find pesticide data for {area}."
+
+def recommend_crops(area):
+    """Recommend crops based on area-specific data."""
+    filtered_data = data[data['Area'].str.strip().str.lower() == area.lower()]
+    if not filtered_data.empty:
+        suitable_crops = filtered_data['Item'].unique()
+        return f"Based on the data, suitable crops for {area} include: {', '.join(suitable_crops)}."
+    return f"Sorry, I couldn't find crop recommendations for {area}."
+
+@app.route('/')
+def home():
+
+    return render_template('chat.html')
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_query = request.json.get("query", "").lower()
+    if not user_query:
+        return jsonify({"response": "Please provide a valid query."})
+
+
+    greetings = ["hi", "hello", "hey"]
+    if any(greet in user_query for greet in greetings):
+        return jsonify({"response": "Hi! I'm farmibot to assist you. You can ask me about rainfall, pesticides, or temperature for a specific area,Crop Recommendations in specific area For example: 'Tell me about rainfall in India.'"})
+
+
+    if "details" in user_query or "help" in user_query:
+        return jsonify({"response": "I'm here to assist with information about rainfall, Pesticides, or Temperature in different areas,Crop Recommendations in specific area. You can ask questions like: 'What is the average temperature in Argentina?' or 'Tell me about pesticide usage in Australia.'"})
+
+
+    areas = data['Area'].str.strip().str.lower().unique() if not data.empty else []
+    attributes = {
+        "rainfall": ["rain", "rainfall"],
+        "pesticides": ["pesticide", "pesticides", "chemical"],
+        "temperature": ["temperature", "temp"]
+    }
+
+    found_area = None
+    for area in areas:
+        if re.search(rf"\b{re.escape(area)}\b", user_query):
+            found_area = area
+            break
+
+    found_attribute = None
+    for attribute, keywords in attributes.items():
+        for keyword in keywords:
+            if keyword in user_query:
+                found_attribute = attribute
+                break
+        if found_attribute:
+            break
+
+
+    if found_attribute:
+        if found_area:
+            if found_attribute == "pesticides":
+                response = get_pesticides_info(found_area)
+            else:
+                response = get_info(found_area, found_attribute)
+        else:
+            response = f"Please specify an area to provide information about {found_attribute}. For example: 'Tell me about {found_attribute} in California.'"
+
+
+    elif "crops" in user_query or "recommendation" in user_query:
+        if found_area:
+            response = recommend_crops(found_area)
+        else:
+            response = "Please specify an area for crop recommendations. For example: 'What crops are suitable for India?'"
+
+
+    else:
+        response = ("Sorry, I couldn't understand your query. You can ask questions like: \n"
+                    "- 'What is the average rainfall in India?'\n"
+                    "- 'What is the amount of  pesticide used in Australia(in tonnes)'\n"
+                    "- 'What is the average temperature in Zimbabwe?'\n"
+                    "- 'What crops are suitable for India?'")
+
+    return jsonify({"response": response})
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
